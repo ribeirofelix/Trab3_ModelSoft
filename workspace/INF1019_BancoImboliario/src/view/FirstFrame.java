@@ -14,6 +14,7 @@ public class FirstFrame extends JFrame {
 		this.dimension = new Dimension(width, height);
 		this.setPreferredSize(this.dimension);
 		this.setLocationRelativeTo(null);
+		this.setBounds(50, 50, dimension.width, dimension.height);
 		
 		this.pack();
 		this.setResizable(false);
@@ -21,7 +22,12 @@ public class FirstFrame extends JFrame {
 	}
 	
 	public void exitFrame (){
-		System.exit(0);
+		this.exitFrame();
 	}
+	
+	
+
+	
+	
 	
 }
