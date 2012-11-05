@@ -13,7 +13,7 @@ public class Main {
 	/* Frames */
 	private static FirstFrame gameFrame;
 	
-	
+	private static int currentPlayer = 0;
 	private static int numberOfPlayers;
 	private static ArrayList<Player> playersArray;
 	/* If position x contains number y, it means that the player y (playersArray) is the x st 
@@ -100,20 +100,28 @@ public class Main {
 		
 		
 	
-		MyButton button2 = new MyButton("Rolar os Dados", gameFrame);
+		MyButton button = new MyButton("Rolar os Dados", gameFrame);
 		
-		button2.addActionListener(gmController);
-		button2.setActionCommand("two");
-		button2.setBounds(tablePanel.getHeight() - 20 , tablePanel.getWidth()/2 , 30, 30);
-		tablePanel.add(button2);
+		button.addActionListener(gmController);
+		button.setActionCommand("two");
+		button.setBounds(tablePanel.getHeight() - 20 , 4*tablePanel.getWidth()/5 , 30, 30);
+		tablePanel.add(button);
 		
 		gameFrame.add(tablePanel);
 		//gameFrame.add(button2);
-		gameFrame.setVisible(true);
-		
-		
-		
+		gameFrame.setVisible(true);	
 		
 	}
-
+	
+	public static Player getCurrentPlayer(){
+		return playersArray.get(currentPlayer);
+	}
+	
+	public static void nextPlayer(){
+		currentPlayer++;
+		
+		if (currentPlayer == numberOfPlayers){
+			currentPlayer = 0;
+		}
+	}
 }

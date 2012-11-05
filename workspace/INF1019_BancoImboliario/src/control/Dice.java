@@ -2,7 +2,6 @@ package control;
 
 import java.util.Random;
 	
-
 public class Dice {
 	private Random dice;
 	
