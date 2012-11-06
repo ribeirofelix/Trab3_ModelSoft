@@ -10,6 +10,6 @@ public class Dice {
 	}
 	
 	public int rollTheDice (){	
-		return dice.nextInt(6);
+		return dice.nextInt(5)+1;
 	}
 }

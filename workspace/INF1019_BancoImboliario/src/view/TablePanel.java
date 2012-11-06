@@ -32,6 +32,13 @@ public class TablePanel extends Panel {
 	}
 	
 	@Override
+	public void paintComponents(Graphics g) {
+		// TODO Auto-generated method stub
+		super.paintComponents(g);
+		this.paint(g);
+	}
+	
+	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		super.paint(g2d);
@@ -58,16 +65,17 @@ public class TablePanel extends Panel {
 		String amarelo = "images//yellow_pin.png"; 
 		String azul = "images//blue_pin.png";
 		// Draw Table Image 
-				BufferedImage buffTableImageYellow = null;
-				BufferedImage buffTableImageAzul =  null;
-				try {
-					buffTableImageYellow = ImageIO.read(new File(amarelo));
-					buffTableImageAzul = ImageIO.read(new File(azul));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		
+		BufferedImage buffTableImageYellow = null;
+		BufferedImage buffTableImageAzul =  null;
+		try {
+			buffTableImageYellow = ImageIO.read(new File(amarelo));
+			buffTableImageAzul = ImageIO.read(new File(azul));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		g2d.drawImage(buffTableImageAzul,players.get(0).getPlayerPoint().x , players.get(0).getPlayerPoint().y , buffTableImageAzul.getWidth() , buffTableImageAzul.getHeight() , null );
+		g2d.drawImage(buffTableImageYellow,players.get(1).getPlayerPoint().x , players.get(1).getPlayerPoint().y , buffTableImageYellow.getWidth() , buffTableImageYellow.getHeight() , null );
 		
 	}
 	

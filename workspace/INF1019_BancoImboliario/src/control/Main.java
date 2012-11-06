@@ -1,6 +1,10 @@
 package control;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.LayoutManager;
 import java.awt.Panel;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -12,7 +16,7 @@ public class Main {
 	
 	/* Frames */
 	private static FirstFrame gameFrame;
-	
+	private static TablePanel tablePanel ;
 	private static int currentPlayer = 0;
 	private static int numberOfPlayers;
 	private static ArrayList<Player> playersArray;
@@ -42,11 +46,11 @@ public class Main {
 		Object[] pivots = EnumSet.allOf(Pivot.class).toArray();
 		
 		// HARDCODE - MUDAR ISSO
-		int iniX = (744/11)*10 , iniY = (740/11) ;
+		int iniX = (744/11)*10 , iniY = 20 ;
 		
 		for (int i = 0; i < numberOfPlayers; i++){
 			playersArray.add( new Player( (Pivot) pivots[i] , new Point(iniX,iniY)  )  );
-			iniY += iniY/2;
+			iniY += iniY;
 			
 		}
 		bringGamePanel();
@@ -95,20 +99,22 @@ public class Main {
 		gameFrame.setVisible(false);
 		gameFrame = new FirstFrame(1200, 800, "Banco Imobiliario!");
 		
-		TablePanel tablePanel = new TablePanel(new Dimension(740, 744), gameFrame ,  playersArray );
+		tablePanel = new TablePanel(new Dimension(740, 744), gameFrame ,  playersArray );
+		
 		GameController gmController = new GameController();
 		
+		/*Button Panel*/
+		MyJPanel btnJpanel = new MyJPanel(new Point(0,744), new Dimension(460, 800) , gameFrame);
 		
-	
 		MyButton button = new MyButton("Rolar os Dados", gameFrame);
 		
 		button.addActionListener(gmController);
 		button.setActionCommand("two");
-		button.setBounds(tablePanel.getHeight() - 20 , 4*tablePanel.getWidth()/5 , 30, 30);
-		tablePanel.add(button);
+		button.setBounds(btnJpanel.getHeight() + 80 , btnJpanel.getWidth()/8 , 200, 50);
+		btnJpanel.add(button);
 		
 		gameFrame.add(tablePanel);
-		//gameFrame.add(button2);
+		gameFrame.add(btnJpanel);
 		gameFrame.setVisible(true);	
 		
 	}
@@ -123,5 +129,20 @@ public class Main {
 		if (currentPlayer == numberOfPlayers){
 			currentPlayer = 0;
 		}
+	}
+
+	public static void updateFrame() {
+		
+				
+		tablePanel.validate();
+		tablePanel.repaint();
+		
+		//gameFrame.update(gameFrame.getGraphics());
+		//gameFrame.getComponent(0).update(gameFrame.getComponent(0).getGraphics() );
+		//gameFrame.getComponent(0).paint(gameFrame.getComponent(0).getGraphics());
+		
+		
+		//gameFrame.paintAll(gameFrame.getComponent(0).getGraphics());
+		
 	}
 }

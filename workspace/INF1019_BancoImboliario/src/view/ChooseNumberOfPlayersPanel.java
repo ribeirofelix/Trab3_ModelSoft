@@ -12,6 +12,7 @@ public class ChooseNumberOfPlayersPanel extends JPanel   {
 	public ChooseNumberOfPlayersPanel (Dimension dimension, Container ct){
 		this.setSize(dimension);
 		this.setLayout(null);
+		
 	}
 
 	

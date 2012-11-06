@@ -38,7 +38,7 @@ public class Player {
 	}
 	
 	public void walkNPositions (int n){
-		this.position =+ n;
+		this.position += n;
 		
 		if (this.position > 40){
 			this.position -= 40;
