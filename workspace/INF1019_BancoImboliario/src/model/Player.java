@@ -37,11 +37,11 @@ public class Player {
 		this.playerPoint = playerPoint;
 	}
 	
-	public void walkNPositions (int n){
-		this.position += n;
+	public void walkOnePosition (){
+		this.position ++;
 		
-		if (this.position > 40){
-			this.position -= 40;
+		if (this.position > 39){
+			this.position = 0;
 		}
 	}
 	

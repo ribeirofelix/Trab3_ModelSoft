@@ -45,13 +45,20 @@ public class Main {
 		playersArray = new ArrayList<>();
 		Object[] pivots = EnumSet.allOf(Pivot.class).toArray();
 		
-		// HARDCODE - MUDAR ISSO
-		int iniX = (744/11)*10 , iniY = 20 ;
+		/* First player pivot drawing point */	
+		int iniX = 666 , iniY = 44 ;
 		
 		for (int i = 0; i < numberOfPlayers; i++){
 			playersArray.add( new Player( (Pivot) pivots[i] , new Point(iniX,iniY)  )  );
-			iniY += iniY;
+			iniX += 18;
 			
+			/* Next row */
+			if (i%2 != 0){
+				iniY += 18; 
+				
+				/* Put iniX on first column */
+				iniX -= 18;
+			}
 		}
 		bringGamePanel();
 	}
