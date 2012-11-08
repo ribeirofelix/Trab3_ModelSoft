@@ -1,11 +1,6 @@
 package control;
 
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.LayoutManager;
-import java.awt.Panel;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -20,9 +15,6 @@ public class Main {
 	private static int currentPlayer = 0;
 	private static int numberOfPlayers;
 	private static ArrayList<Player> playersArray;
-	/* If position x contains number y, it means that the player y (playersArray) is the x st 
-	 * player to play */
-	private static int[] playersOrder;
 	
 	public static int getNumberOfPlayers(){
 		return numberOfPlayers;
@@ -57,7 +49,7 @@ public class Main {
 				iniY += 18; 
 				
 				/* Put iniX on first column */
-				iniX -= 18;
+				iniX -= 36;
 			}
 		}
 		bringGamePanel();
@@ -114,6 +106,7 @@ public class Main {
 		MyJPanel btnJpanel = new MyJPanel(new Point(0,744), new Dimension(460, 800) , gameFrame);
 		
 		MyButton button = new MyButton("Rolar os Dados", gameFrame);
+	
 		
 		button.addActionListener(gmController);
 		button.setActionCommand("two");

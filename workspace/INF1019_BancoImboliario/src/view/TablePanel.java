@@ -59,23 +59,23 @@ public class TablePanel extends Panel {
 	
 	private void drawPivots(Graphics2D g2d) {
 		
-		int initialPointerX = this.getHeight() / 11;
-		int initialPointerY = this.getHeight() / 11 ;
-		int WidHei = 5 ;
-		String amarelo = "images//yellow_pin.png"; 
-		String azul = "images//blue_pin.png";
-		// Draw Table Image 
-		BufferedImage buffTableImageYellow = null;
-		BufferedImage buffTableImageAzul =  null;
-		try {
-			buffTableImageYellow = ImageIO.read(new File(amarelo));
-			buffTableImageAzul = ImageIO.read(new File(azul));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
+		for (Player onePlayer : players) {
+			BufferedImage buffImagePivot = null ;
+			try {
+				
+				buffImagePivot = ImageIO.read(new File(onePlayer.getPivot().getValue() ));
+				
+			} catch (IOException e) {
+				
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				
+			}
+			g2d.drawImage(buffImagePivot,onePlayer.getPlayerPoint().x , onePlayer.getPlayerPoint().y , buffImagePivot.getWidth() , buffImagePivot.getHeight() , null );
+			
 		}
-		g2d.drawImage(buffTableImageAzul,players.get(0).getPlayerPoint().x , players.get(0).getPlayerPoint().y , buffTableImageAzul.getWidth() , buffTableImageAzul.getHeight() , null );
-		g2d.drawImage(buffTableImageYellow,players.get(1).getPlayerPoint().x , players.get(1).getPlayerPoint().y , buffTableImageYellow.getWidth() , buffTableImageYellow.getHeight() , null );
+		
 		
 	}
 	
