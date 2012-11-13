@@ -1,4 +1,4 @@
-package model.moneyBuilder;
+package model.money;
 
 public enum Money {
 	One (1),

@@ -1,14 +1,13 @@
-package model.moneyBuilder;
+package model.money;
 
 
 public class PackOfTen extends MoneyPack {
 
-	@Override
-	public void initializePack() {
+	public PackOfTen() {
 		this.money = Money.Ten;
 		this.howMany = 10;
-
 	}
+	
 
 	
 

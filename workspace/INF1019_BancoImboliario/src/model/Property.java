@@ -3,8 +3,8 @@ package model;
 public abstract class Property {
 	
 	private String imagePath;
-	private int mortgageValue ;
-	private Player playerOwner ;
+	private int mortgageValue;
+	private Player playerOwner;
 	
 	public String getImagePath() {
 		return imagePath;

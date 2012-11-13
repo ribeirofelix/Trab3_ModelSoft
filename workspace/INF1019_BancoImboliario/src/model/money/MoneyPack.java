@@ -1,4 +1,4 @@
-package model.moneyBuilder;
+package model.money;
 
 
 
@@ -8,7 +8,6 @@ public abstract class MoneyPack {
 	protected int howMany ;
 	
 	
-	public abstract void initializePack();
 	
 	public boolean removeMoney(int howManyNotes){
 		if(this.howMany == 0 || this.howMany < howManyNotes ){
@@ -24,7 +23,7 @@ public abstract class MoneyPack {
 	}
 	
 	public int getAmount(){
-		return this.howMany;
+		return this.howMany * money.getValue() ;
 	}
 	
 }
