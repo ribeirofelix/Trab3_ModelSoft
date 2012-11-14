@@ -1,11 +1,13 @@
 package control;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 
 import java.awt.Font;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 
 import javax.swing.JLabel;
@@ -19,10 +21,11 @@ public class Main {
 	/* Frames */
 	private static FirstFrame gameFrame;
 	private static TablePanel tablePanel ;
-	private static int currentPlayer = 0;
+	private static int currentPlayer = -1;
 	private static int numberOfPlayers;
 	private static ArrayList<Player> playersArray;
 	private static Board boardGame ;
+	private final static String nameLblDiceRoll = "lblDiceRollValue" , nameLblGamerStatus = "lblGamerStatus";
 	
 	public static int getNumberOfPlayers(){
 		return numberOfPlayers;
@@ -125,10 +128,18 @@ public class Main {
 		
 		/*Dice roll value*/
 		JLabel lblDiceRollValue = new JLabel();
+		lblDiceRollValue.setName( nameLblDiceRoll);
 		lblDiceRollValue.setBounds(btnJpanel.getHeight() + 80 , btnJpanel.getWidth()/4 , 200, 50);
 		lblDiceRollValue.setFont(new Font(Font.SANS_SERIF, Font.BOLD  , 50));
 		btnJpanel.add(lblDiceRollValue);
 	
+		/* Label for display gamer status */
+		JLabel lblGamerStatus = new JLabel();
+		lblGamerStatus.setName(nameLblGamerStatus);
+		lblGamerStatus.setBounds(btnJpanel.getHeight()  , btnJpanel.getWidth() - 100, 500, 200);
+		lblGamerStatus.setFont(new Font(Font.SANS_SERIF, Font.BOLD  , 30));
+		setPlayerStatus(lblGamerStatus);
+		btnJpanel.add(lblGamerStatus);
 		
 		
 		/*Buy property Button*/
@@ -137,7 +148,6 @@ public class Main {
 		btnBuyProperty.setActionCommand("buyProperty");
 		btnBuyProperty.setEnabled(false);
 		btnBuyProperty.setBounds(btnJpanel.getHeight() + 80 , btnJpanel.getWidth()/2 , 200, 50);
-		
 		btnJpanel.add(btnBuyProperty);
 		
 		
@@ -148,6 +158,9 @@ public class Main {
 	}
 	
 	public static Player getCurrentPlayer(){
+		if(currentPlayer < 0)
+			return playersArray.get(0);
+		
 		return playersArray.get(currentPlayer);
 	}
 	
@@ -164,19 +177,50 @@ public class Main {
 		tablePanel.repaint();
 		
 	}
-	public static void showRollDice(int rollOne, int rollTwo){
+	public static void showRollDiceAndPlayerStatus(int rollOne, int rollTwo){
 		for (Component comp : gameFrame.getContentPane().getComponents() ) {
 			if(comp instanceof JPanel){
 				for (Component compPanl : ((JPanel) comp).getComponents()) {
 					
 					if(compPanl instanceof JLabel){
-						((JLabel)compPanl).setText(rollOne + " " + rollTwo );
+						JLabel lbl =(JLabel)compPanl ;
+						if(lbl.getName().equals(nameLblDiceRoll))
+							lbl.setText(rollOne + " " + rollTwo );
+						else if ( lbl.getName().equals(nameLblGamerStatus)) {
+							setPlayerStatus(lbl);
+						}
 					
 					}
 					
 				}
 			}			
 		}
+	}
+
+	private static Component searchComponentInBtnJPanelByName(String name){
+		for (Component comp : gameFrame.getContentPane().getComponents() ) {
+			if(comp instanceof JPanel){
+				for (Component compPanl : ((JPanel) comp).getComponents()) {
+					
+					if(compPanl.getName() != null  && compPanl.getName().equals(name))
+						return compPanl;
+					
+				}
+			}			
+		}
+		return null;
+	}
+	
+	public static void updatePlayerStatus(){
+		JLabel lblGamerStatus =  (JLabel)searchComponentInBtnJPanelByName(nameLblGamerStatus);
+		setPlayerStatus(lblGamerStatus);
+	}
+	
+	private static void setPlayerStatus(JLabel lblGamerStatus) {
+		Player currentGamer = getCurrentPlayer();
+		lblGamerStatus.setForeground(currentGamer.getPivot().getColor());
+		lblGamerStatus.setText("<html>Jogador " + currentGamer.getPivot().toString() + "<br>" +
+				"Dinheiro: " + currentGamer.getAmountOfMoney() + "</html>" );
 	}
 
 	public static void enableBuyPropertyButton(boolean enable){

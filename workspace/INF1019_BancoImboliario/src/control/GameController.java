@@ -32,12 +32,14 @@ public class GameController implements ActionListener {
 		Property propertyToBuy = Main.getBoardGame().getPropertyAt(currentPleyer.getPosition());
 		
 		currentPleyer.buyProperty(propertyToBuy);
-		 System.out.println(currentPleyer.getAmountOfMoney());
-		 System.out.println(propertyToBuy.getPlayerOwner());
-		
+		Main.updatePlayerStatus();
 	}
 	
 	private void rollDiceAction() {
+		
+		/*If rollDice is clicked , have to set a next player to play. */
+		Main.nextPlayer();		
+		
 		Dice dice = new Dice();
 		int sizeOfWalk = 61;
 		
@@ -47,7 +49,7 @@ public class GameController implements ActionListener {
 		int numOfHouses = rollOne + rollTwo;
 		
 		
-		Main.showRollDice(rollOne, rollTwo);
+		Main.showRollDiceAndPlayerStatus(rollOne, rollTwo);
 
 		Player currentPlayer = Main.getCurrentPlayer();		
 		
@@ -84,7 +86,7 @@ public class GameController implements ActionListener {
 			Main.enableBuyPropertyButton(false);
 		}
 		
-		Main.nextPlayer();
+		
 		Main.updateFrame();
 	}
 	

@@ -16,7 +16,9 @@ public abstract class Property {
 	public int getMortgageValue() {
 		return mortgageValue;
 	}
-	
+	public void setMortgageValue(int mortgageValue){
+		this.mortgageValue = mortgageValue;
+	}
 	public Player getPlayerOwner() {
 		return playerOwner;
 	}

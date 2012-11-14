@@ -1,7 +1,11 @@
 package model;
 
+import java.util.List;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 
 import java.util.HashMap;
 
@@ -67,7 +71,7 @@ public class Player {
 	
 	public boolean buyProperty(Property property){
 		
-		if(property.getPrice() <= getAmountOfMoney() ){
+		if(property.getPrice() <= getAmountOfMoney()  && property.getPlayerOwner() == null){
 			myProperties.add(property);
 		
 			property.setPlayerOwner(this);
@@ -84,11 +88,17 @@ public class Player {
 		
 		if(howMuch <= getAmountOfMoney() ){
 			
-			
-			for (MoneyPack pack  : this.myMoney.values()) {
+			List<MoneyPack> listPackMoney = new LinkedList<MoneyPack>( this.myMoney.values() );
+			Collections.sort(listPackMoney,new Comparator<MoneyPack>() {
+				public int compare(MoneyPack o1, MoneyPack o2) {
+		               return ((Comparable) ((MoneyPack) (o2)).getMoneyType().getValue() )
+		              .compareTo(((MoneyPack) (o1)).getMoneyType().getValue() );
+		          }
+			});
+			for (MoneyPack pack  : listPackMoney) {
 				
 				
-				while(pack.getAmount() > 0 && ( howMuch / pack.getMoneyType().getValue() ) >= 1 &&  ( howMuch / pack.getMoneyType().getValue() ) <= pack.getHowManyNote() ){
+				while( ( howMuch / pack.getMoneyType().getValue() ) <= pack.getHowManyNote() && pack.getAmount() > 0 && ( howMuch / pack.getMoneyType().getValue() ) >= 1   ){
 					
 					if (pack.removeMoney(howMuch / pack.getMoneyType().getValue() ) ){
 						howMuch -= pack.getMoneyType().getValue();			

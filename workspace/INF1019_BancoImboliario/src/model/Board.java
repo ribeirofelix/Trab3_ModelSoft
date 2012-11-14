@@ -13,7 +13,7 @@ public class Board {
 		}
 		for (int i = 0; i < 20 ; i++) {
 			
-			houses.add(new House(i,new Chance() ));
+			houses.add(new House(i,new ChanceHouse() ));
 		}
 	}
 	
