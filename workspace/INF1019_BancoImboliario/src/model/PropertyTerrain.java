@@ -83,6 +83,6 @@ public class PropertyTerrain extends Property implements  ICard {
 	}
 
 	public String getGroup() {
-		return Group;
+		return group;
 	}
 }
