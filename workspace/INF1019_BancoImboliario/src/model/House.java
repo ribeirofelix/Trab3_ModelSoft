@@ -7,6 +7,12 @@ public class House {
 	
 	public House(int position , ICard card) {
 		this.position = position;
-		this.card = card;
+		this.card = card ;
 	}
+
+	public ICard getCard() {
+		return card;
+	}
+
+	
 }

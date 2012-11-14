@@ -6,6 +6,7 @@ public class PropertyCompany extends Property implements  ICard {
 	
 	public PropertyCompany (int multiplier){
 		this.multiplier = multiplier;
+		this.price = 200;
 	}
 	
 	@Override

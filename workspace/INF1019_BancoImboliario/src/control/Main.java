@@ -1,9 +1,16 @@
 package control;
 
+import java.awt.Component;
 import java.awt.Dimension;
+
+import java.awt.Font;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.EnumSet;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import view.*;
 import model.*;
 
@@ -15,6 +22,7 @@ public class Main {
 	private static int currentPlayer = 0;
 	private static int numberOfPlayers;
 	private static ArrayList<Player> playersArray;
+	private static Board boardGame ;
 	
 	public static int getNumberOfPlayers(){
 		return numberOfPlayers;
@@ -52,6 +60,8 @@ public class Main {
 				iniX -= 36;
 			}
 		}
+		
+		boardGame = new Board();
 		bringGamePanel();
 	}
 
@@ -104,14 +114,32 @@ public class Main {
 		
 		/*Button Panel*/
 		MyJPanel btnJpanel = new MyJPanel(new Point(0,744), new Dimension(460, 800) , gameFrame);
+		//btnJpanel.setLayout(new FlowLayout());
 		
-		MyButton button = new MyButton("Rolar os Dados", gameFrame);
+		/*Roll dice button */
+		MyButton btnRollDice = new MyButton("Rolar os Dados", btnJpanel);		
+		btnRollDice.addActionListener(gmController);
+		btnRollDice.setActionCommand("rollDices");
+		btnRollDice.setBounds(btnJpanel.getHeight() + 80 , btnJpanel.getWidth()/8 , 200, 50);
+		btnJpanel.add(btnRollDice);
+		
+		/*Dice roll value*/
+		JLabel lblDiceRollValue = new JLabel();
+		lblDiceRollValue.setBounds(btnJpanel.getHeight() + 80 , btnJpanel.getWidth()/4 , 200, 50);
+		lblDiceRollValue.setFont(new Font(Font.SANS_SERIF, Font.BOLD  , 50));
+		btnJpanel.add(lblDiceRollValue);
 	
 		
-		button.addActionListener(gmController);
-		button.setActionCommand("two");
-		button.setBounds(btnJpanel.getHeight() + 80 , btnJpanel.getWidth()/8 , 200, 50);
-		btnJpanel.add(button);
+		
+		/*Buy property Button*/
+		MyButton btnBuyProperty = new MyButton("Comprar Propriedade", btnJpanel);
+		btnBuyProperty.addActionListener(gmController);
+		btnBuyProperty.setActionCommand("buyProperty");
+		btnBuyProperty.setEnabled(false);
+		btnBuyProperty.setBounds(btnJpanel.getHeight() + 80 , btnJpanel.getWidth()/2 , 200, 50);
+		
+		btnJpanel.add(btnBuyProperty);
+		
 		
 		gameFrame.add(tablePanel);
 		gameFrame.add(btnJpanel);
@@ -132,17 +160,43 @@ public class Main {
 	}
 
 	public static void updateFrame() {
-		
-				
 		tablePanel.validate();
 		tablePanel.repaint();
 		
-		//gameFrame.update(gameFrame.getGraphics());
-		//gameFrame.getComponent(0).update(gameFrame.getComponent(0).getGraphics() );
-		//gameFrame.getComponent(0).paint(gameFrame.getComponent(0).getGraphics());
-		
-		
-		//gameFrame.paintAll(gameFrame.getComponent(0).getGraphics());
-		
 	}
+	public static void showRollDice(int rollOne, int rollTwo){
+		for (Component comp : gameFrame.getContentPane().getComponents() ) {
+			if(comp instanceof JPanel){
+				for (Component compPanl : ((JPanel) comp).getComponents()) {
+					
+					if(compPanl instanceof JLabel){
+						((JLabel)compPanl).setText(rollOne + " " + rollTwo );
+					
+					}
+					
+				}
+			}			
+		}
+	}
+
+	public static void enableBuyPropertyButton(boolean enable){
+		for (Component comp : gameFrame.getContentPane().getComponents() ) {
+			if(comp instanceof JPanel){
+				for (Component compPanl : ((JPanel) comp).getComponents()) {
+					
+					if(compPanl instanceof MyButton && ((MyButton) compPanl).getActionCommand().equals("buyProperty")){
+						((MyButton)compPanl).setEnabled(enable);
+					
+					}
+					
+				}
+			}			
+		}
+	}
+
+	public static Board getBoardGame() {
+		return boardGame;
+	}
+
+	
 }

@@ -8,6 +8,14 @@ public abstract class MoneyPack {
 	protected int howMany ;
 	
 	
+	public Money getMoneyType(){
+		return money;
+	}
+	
+	public int getHowManyNote (){
+		return howMany;
+	}
+	
 	
 	public boolean removeMoney(int howManyNotes){
 		if(this.howMany == 0 || this.howMany < howManyNotes ){

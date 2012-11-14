@@ -7,6 +7,8 @@ public class PackOfFifty extends MoneyPack {
 		this.money = Money.Fifty;
 		this.howMany = 10;
 	}
+
+
 	
 	
 }
