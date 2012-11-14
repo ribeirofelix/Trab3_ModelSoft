@@ -1,0 +1,6 @@
+Companhia de Taxi Aereo;50;100
+Companhia de Navegação;40;75
+Companhia Ferroviaria;50;100
+Companhia de Taxi;40;75
+Companhia de Viação;50;100
+Companhia de Aviação;50;100
