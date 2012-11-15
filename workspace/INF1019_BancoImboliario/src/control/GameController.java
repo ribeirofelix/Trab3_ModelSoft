@@ -4,23 +4,55 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import model.Board;
+import model.Chance;
+import model.ICard;
 import model.Player;
+import model.Property;
 
 public class GameController implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		switch (e.getActionCommand()) {
+		case "rollDices":
+			rollDiceAction();
+			break;
+		case "buyProperty":
+			buyProperty();
+			break;
+		default:
+			break;
+		}
+		
+	}
+
+	private void buyProperty(){
+		
+		Player currentPleyer = Main.getCurrentPlayer();
+		System.out.println(currentPleyer.getAmountOfMoney());
+		Property propertyToBuy = Main.getBoardGame().getPropertyAt(currentPleyer.getPosition());
+		
+		currentPleyer.buyProperty(propertyToBuy);
+		Main.updatePlayerStatus();
+	}
+	
+	private void rollDiceAction() {
+		
+		/*If rollDice is clicked , have to set a next player to play. */
+		Main.nextPlayer();		
+		
 		Dice dice = new Dice();
 		int sizeOfWalk = 61;
 		
 		/* Roll the dice twice */
-		int numOfHouses = dice.rollTheDice();
-		numOfHouses += dice.rollTheDice();
+		int rollOne = dice.rollTheDice();
+		int rollTwo = dice.rollTheDice();
+		int numOfHouses = rollOne + rollTwo;
 		
 		
-		// colocar dado na tela
-		System.out.println(numOfHouses);
-		
+		Main.showRollDiceAndPlayerStatus(rollOne, rollTwo);
+
 		Player currentPlayer = Main.getCurrentPlayer();		
 		
 		int xCoordinate, yCoordinate; 
@@ -49,7 +81,24 @@ public class GameController implements ActionListener {
 			currentPlayer.walkOnePosition();
 		}
 		
-		Main.nextPlayer();
+		if( Main.getBoardGame().isPurchasable( currentPlayer.getPosition() ) ){
+			Main.enableBuyPropertyButton(true);
+		}
+		else{
+			if( Main.getBoardGame().isChance(currentPlayer.getPosition()) ){
+				Chance cardChance = Main.getBoardGame().getOneChance();
+				 cardChance.setPlayerOnwer(currentPlayer);
+				cardChance.action();
+				Main.updatePlayerStatus();
+			}
+			Main.enableBuyPropertyButton(false);
+		}
+		
+		
 		Main.updateFrame();
 	}
+	
+	
+	
+	
 }
