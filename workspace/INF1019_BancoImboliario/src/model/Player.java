@@ -88,6 +88,8 @@ public class Player {
 		
 		if(howMuch <= getAmountOfMoney() ){
 			
+			/* Put values from HashMap<MoneyPack> in a LinkedList to
+			 * sort it .*/
 			List<MoneyPack> listPackMoney = new LinkedList<MoneyPack>( this.myMoney.values() );
 			Collections.sort(listPackMoney,new Comparator<MoneyPack>() {
 				public int compare(MoneyPack o1, MoneyPack o2) {
@@ -95,19 +97,24 @@ public class Player {
 		              .compareTo(((MoneyPack) (o1)).getMoneyType().getValue() );
 		          }
 			});
+			
+			/* Iterate over the list to remove the money */
 			for (MoneyPack pack  : listPackMoney) {
 				
 				
-				while( ( howMuch / pack.getMoneyType().getValue() ) <= pack.getHowManyNote() && pack.getAmount() > 0 && ( howMuch / pack.getMoneyType().getValue() ) >= 1   ){
+				while( ( howMuch / pack.getMoneyType().getValue() ) <= pack.getHowManyNote() && 
+						pack.getAmount() > 0 && ( howMuch / pack.getMoneyType().getValue() ) >= 1   ){
 					
-					if (pack.removeMoney(howMuch / pack.getMoneyType().getValue() ) ){
-						howMuch -= pack.getMoneyType().getValue();			
+					int removed ;
+					if ( ( removed = pack.removeMoney(howMuch / pack.getMoneyType().getValue() ) ) > 0 ){
+						howMuch -= pack.getMoneyType().getValue() * removed;			
 					}
 					
 				}
 				
 			}
 			
+			/* Verify if has some value to pay. If true , exchange money*/
 			if(howMuch > 0 ){
 				if(howMuch < 5)
 					this.exchangeMoney(Money.Five);	
@@ -136,6 +143,33 @@ public class Player {
 		return false ;
 	}
 	
+	public void putMoney(int howMuch){
+		/* Put values from HashMap<MoneyPack> in a LinkedList to
+		 * sort it .*/
+		List<MoneyPack> listPackMoney = new LinkedList<MoneyPack>( this.myMoney.values() );
+		Collections.sort(listPackMoney,new Comparator<MoneyPack>() {
+			public int compare(MoneyPack o1, MoneyPack o2) {
+	               return ((Comparable) ((MoneyPack) (o2)).getMoneyType().getValue() )
+	              .compareTo(((MoneyPack) (o1)).getMoneyType().getValue() );
+	          }
+		});
+		
+		/* Iterate over the list to remove the money */
+		for (MoneyPack pack  : listPackMoney) {
+			
+			
+			while( ( howMuch / pack.getMoneyType().getValue() ) <= pack.getHowManyNote() && 
+					pack.getAmount() > 0 && ( howMuch / pack.getMoneyType().getValue() ) >= 1   ){
+				
+				int putted ;
+				if ( ( putted = pack.putMoney( (howMuch / pack.getMoneyType().getValue() ) ) ) > 0 ){
+					howMuch -= pack.getMoneyType().getValue() * putted;			
+				}
+				
+			}
+			
+		}
+	}
 	
 	private void exchangeMoney(Money moneyToTrade){
 		MoneyPack pack = this.myMoney.get(moneyToTrade);

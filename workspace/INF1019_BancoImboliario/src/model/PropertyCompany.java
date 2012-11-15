@@ -4,9 +4,11 @@ public class PropertyCompany extends Property implements  ICard {
 
 	private int multiplier;
 	
-	public PropertyCompany (int multiplier){
+	public PropertyCompany (String path , int mortgage ,int multiplier){
 		this.multiplier = multiplier;
-		this.price = 200;
+		this.price = mortgage * 2 ;
+		this.mortgageValue = mortgage;
+		this.imagePath = path;
 	}
 	
 	@Override

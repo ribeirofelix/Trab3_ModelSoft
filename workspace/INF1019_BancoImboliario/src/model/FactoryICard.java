@@ -6,45 +6,93 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
+
 public class FactoryICard {
-	private static List<ICard> chanceCards;
-	private static List<ICard> terrainsCards;
-	private static List<ICard> companyCards;
+	private  List<ICard> chanceCards;
+	private  List<ICard> terrainsCards;
+	private  List<ICard> companyCards;
 	
-	public static void createAllTheCards(){
+	public  void createAllTheCards(){
 		
 		chanceCards = createChanceCards();
 	    terrainsCards = createTerrainsCards();
 		companyCards = createCompanyCards();
 	}
 	
-	public static List<ICard> getChangeCards(){
+	public  List<ICard> getChangeCards(){
 		return chanceCards;
 	}
 	
-	public static List<ICard> getBoardCards(){
-		return null;
+	public  List<ICard> getBoardCards(){
+		List<ICard> allTheCards = new ArrayList<ICard>();
+		
+		for (int i = 0, chanceIdx = 0, terrainIdx = 0, companyIdx = 0; i < 40; i++){
+			
+			switch (i){
+			/* Start point */
+			case 0:	
+				allTheCards.add( new Profit (200));
+				break;
+				
+			/* Chance */
+			case 2: case 12: case 16: case 22: case 27: case 37:
+				allTheCards.add(chanceCards.get(chanceIdx++));
+				break;
+				
+			/* Company */
+			case 5: case 7: case 15: case 25: case 32: case 35:
+				allTheCards.add(companyCards.get(companyIdx++));
+				break;
+				
+			/* Profit */
+			case 18:
+				allTheCards.add( new Profit(200));
+				break;
+				
+			/* Taxes */	
+			case 24:
+				allTheCards.add( new Tribute(200));
+				break;
+				
+			/* Prision or free stop - nothing hapens*/
+			case 10: case 20:
+				allTheCards.add(null);
+				break;
+			
+			/* Busted */
+			case 30:
+				allTheCards.add(new GoToPrision());
+				break;
+			
+			/* Terrain */
+			default:
+				allTheCards.add(terrainsCards.get(terrainIdx++));
+			}	
+		}
+		
+		return allTheCards;
 	}
 	
-	private static List<ICard> createCompanyCards() {
+	private  List<ICard> createCompanyCards() {
 		
 		try {
 			List<ICard> cards = new ArrayList<ICard>();
 			
-			BufferedReader chanceText = new BufferedReader( new FileReader("txt//files//Companies.txt"));
-			String line = chanceText.readLine();
-			
-			for (int i = 1; i < 7 && chanceText.ready(); i++, line = chanceText.readLine()){
+			BufferedReader chanceText = new BufferedReader( new FileReader("txt files//Companies.txt"));
+			String line = null;
+			int i = 1;
+			while( ( line = chanceText.readLine() ) != null){
 				
-				int indexOfDotComa = line.indexOf(";");
-				int indexOfSecondDotComa = line.indexOf(";", indexOfDotComa);
+				int  multiplier = 1 , mortgage = 2 ;
 				
-				PropertyCompany company = new PropertyCompany(Integer.parseInt(line.substring(indexOfDotComa, indexOfSecondDotComa)));
+				String[] splitedLine = line.split(";");
 				
-				company.setImagePath("images//property cards//company"+i+".png");
-				company.setMortgageValue( Integer.parseInt( line.substring(indexOfSecondDotComa)));
+				PropertyCompany company = new PropertyCompany("images//companies cards//company"+ i +".png" ,
+															  Integer.parseInt(splitedLine[mortgage]) , Integer.parseInt(splitedLine[multiplier]) );
+				
 				
 				cards.add(company);
+				i++;
 			}
 			
 			chanceText.close();
@@ -57,71 +105,45 @@ public class FactoryICard {
 		return null;
 	}
 
-	private static List<ICard> createTerrainsCards() {
+	private  List<ICard> createTerrainsCards() {
 			
 			try {
 				List<ICard> cards = new ArrayList<ICard>();
 				
-				BufferedReader chanceText = new BufferedReader( new FileReader("txt//files//Terrains.txt"));
-				String line = chanceText.readLine();
-				String fileName;
+				BufferedReader terrainsFile = new BufferedReader( new FileReader("txt files//Terrains.txt"));
+				String line = null ;
+				
+				while( (line = terrainsFile.readLine()) != null){
+					int   name = 0 
+							, group = 1 
+							, rent = 2 
+							, rent1 = 3 
+							, rent2 = 4
+							, rent3 = 5
+							, rent4 = 6
+							, hotel = 7
+							, priceHouse = 8
+							, priceHotel = 9
+							, mortgage = 10 ;
+							
+						
+						String[] splitedLine = line.split(";") ;
+						
+						PropertyTerrain terrain = new PropertyTerrain(splitedLine[group], Integer.parseInt( splitedLine[rent] ),
+												Integer.parseInt(splitedLine[rent1] ), Integer.parseInt(splitedLine[rent2] ), 
+												Integer.parseInt(splitedLine[rent3] ), Integer.parseInt( splitedLine[rent4] ) ,
+												Integer.parseInt(splitedLine[hotel] ), Integer.parseInt(splitedLine[priceHouse] ), 
+												Integer.parseInt(splitedLine[priceHotel] ), Integer.parseInt( splitedLine[mortgage] ), 
+												"images//terrain cards//"+splitedLine[name]+".png");
+
+						
+						cards.add(terrain);
+						
+					
+				}			
 				
 				
-				for (int i = 1; i < 23 && chanceText.ready(); i++, line = chanceText.readLine()){
-					
-					int indexOfDotComa = line.indexOf(";");
-					int indexOfSecondDotComa = line.indexOf(";", indexOfDotComa);
-					fileName = line.substring(0, indexOfDotComa);
-					
-					
-					/* read all the line */
-					String group = line.substring(indexOfDotComa, indexOfSecondDotComa);
-					indexOfDotComa = indexOfSecondDotComa;
-					indexOfSecondDotComa = line.indexOf(";", indexOfDotComa);
-					
-					int rent = Integer.parseInt(line.substring(indexOfDotComa, indexOfSecondDotComa));
-					indexOfDotComa = indexOfSecondDotComa;
-					indexOfSecondDotComa = line.indexOf(";", indexOfDotComa);
-					
-					int rent1 = Integer.parseInt(line.substring(indexOfDotComa, indexOfSecondDotComa));
-					indexOfDotComa = indexOfSecondDotComa;
-					indexOfSecondDotComa = line.indexOf(";", indexOfDotComa);
-					
-					int rent2 = Integer.parseInt(line.substring(indexOfDotComa, indexOfSecondDotComa));
-					indexOfDotComa = indexOfSecondDotComa;
-					indexOfSecondDotComa = line.indexOf(";", indexOfDotComa);
-					
-					int rent3 = Integer.parseInt(line.substring(indexOfDotComa, indexOfSecondDotComa));
-					indexOfDotComa = indexOfSecondDotComa;
-					indexOfSecondDotComa = line.indexOf(";", indexOfDotComa);
-					
-					int rent4 = Integer.parseInt(line.substring(indexOfDotComa, indexOfSecondDotComa));
-					indexOfDotComa = indexOfSecondDotComa;
-					indexOfSecondDotComa = line.indexOf(";", indexOfDotComa);
-					
-					int rentHotel = Integer.parseInt(line.substring(indexOfDotComa, indexOfSecondDotComa));
-					indexOfDotComa = indexOfSecondDotComa;
-					indexOfSecondDotComa = line.indexOf(";", indexOfDotComa);
-					
-					int housePrice = Integer.parseInt(line.substring(indexOfDotComa, indexOfSecondDotComa));
-					indexOfDotComa = indexOfSecondDotComa;
-					indexOfSecondDotComa = line.indexOf(";", indexOfDotComa);
-					
-					int hotelPrice = Integer.parseInt(line.substring(indexOfDotComa, indexOfSecondDotComa));
-					indexOfDotComa = indexOfSecondDotComa;
-					indexOfSecondDotComa = line.indexOf(";", indexOfDotComa);
-					
-					int mortgage = Integer.parseInt(line.substring(indexOfDotComa));
-					
-					PropertyTerrain terrain = new PropertyTerrain(group, rent, rent1, rent2, rent3, rent4, rentHotel, housePrice, 
-																	hotelPrice, mortgage, "images//terrain cards//"+fileName+".png");
-					
-					terrain.setMortgageValue( Integer.parseInt( line.substring(indexOfSecondDotComa)));
-					
-					cards.add(terrain);
-				}
-				
-				chanceText.close();
+				terrainsFile.close();
 			
 				return cards;
 				
@@ -131,23 +153,28 @@ public class FactoryICard {
 			return null;
 		}
 	
-	private static List<ICard> createChanceCards() {
+	private  List<ICard> createChanceCards() {
 		
 		try {
 			List<ICard> cards = new ArrayList<ICard>();
 			
-			BufferedReader chanceText = new BufferedReader( new FileReader("txt//files//Chance.txt"));
-			String line = chanceText.readLine();
-			
-			for (int i = 1; i < 31 && chanceText.ready(); i++, line = chanceText.readLine()){
+			BufferedReader chanceText = new BufferedReader( new FileReader("txt files//Chance.txt"));
+			String line = null ;
+			int i =1 ;
+			while (( line = chanceText.readLine() ) != null) {
+				int operator = 0 , value = 1 ;
 				
-				int indexOfDotComa = line.indexOf(";");
+				String[] splitedLine = line.split(";");
+				
+				
 				Chance chance = new Chance ("images//chance cards//chance"+i+".png",
-												line.substring(0, indexOfDotComa),
-												Integer.parseInt(line.substring(indexOfDotComa)));
+												splitedLine[operator],
+												Integer.parseInt( splitedLine[value] ) );
 				
 				cards.add(chance);
+				i++;
 			}
+			
 			
 			chanceText.close();
 		

@@ -1,20 +1,27 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Board {
 	private ArrayList<House> houses = new ArrayList<>(40);
-	
+	private List<Chance> chances  = new ArrayList<Chance>();
 	
 	public Board() {
-		for (int i = 0; i < 20 ; i++) {
-			
-			houses.add(new House(i,new PropertyCompany(i) ));
+		
+		FactoryICard factCards = new FactoryICard();
+		factCards.createAllTheCards();
+		int inx = 0;
+		for (ICard card : factCards.getBoardCards()) {
+			houses.add(new House( inx, card));
+			inx++;
 		}
-		for (int i = 0; i < 20 ; i++) {
-			
-			houses.add(new House(i,new ChanceHouse() ));
+		for (ICard cardChance : factCards.getChangeCards()) {
+			chances.add( (Chance )cardChance);
 		}
+		Collections.shuffle(chances);
+		
 	}
 	
 	public House getHouseOnThisPosition (int index){
@@ -38,4 +45,18 @@ public class Board {
 		}
 		return false;
 	}
+	
+	public Chance getOneChance(){
+		Chance removedChance = chances.remove(0);
+		chances.add(removedChance);
+		return removedChance;
+	}
+	public boolean isChance(int position){
+		ICard cardAtHouse = houses.get(position).getCard() ;
+		if (cardAtHouse  instanceof Chance){
+			 return true;
+		}
+		return false;
+	}
+	
 }

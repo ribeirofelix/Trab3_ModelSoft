@@ -24,7 +24,7 @@ public class PropertyTerrain extends Property implements  ICard {
 		this.rentHotel = rentHotel;
 		this.housePrice = housePrice;
 		this.hotelPrice = hotelPrice;
-		
+		this.price = mortgage * 2;
 		super.setMortgageValue(mortgage);
 		super.setImagePath(imagePath);
 		

@@ -17,17 +17,18 @@ public abstract class MoneyPack {
 	}
 	
 	
-	public boolean removeMoney(int howManyNotes){
+	public int removeMoney(int howManyNotes){
 		if(this.howMany == 0 || this.howMany < howManyNotes ){
-			return false;
+			return 0;
 		}
 		
 		this.howMany -= howManyNotes;		
-		return true;
+		return howManyNotes;
 	}
 	
-	public void putMoney(int howManyNotes) {
+	public int putMoney(int howManyNotes) {
 		this.howMany += howManyNotes;
+		return howManyNotes;
 	}
 	
 	public int getAmount(){

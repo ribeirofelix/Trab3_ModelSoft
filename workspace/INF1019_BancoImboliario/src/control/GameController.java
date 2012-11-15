@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import model.Board;
+import model.Chance;
+import model.ICard;
 import model.Player;
 import model.Property;
 
@@ -83,6 +85,12 @@ public class GameController implements ActionListener {
 			Main.enableBuyPropertyButton(true);
 		}
 		else{
+			if( Main.getBoardGame().isChance(currentPlayer.getPosition()) ){
+				Chance cardChance = Main.getBoardGame().getOneChance();
+				 cardChance.setPlayerOnwer(currentPlayer);
+				cardChance.action();
+				Main.updatePlayerStatus();
+			}
 			Main.enableBuyPropertyButton(false);
 		}
 		

@@ -1,13 +1,12 @@
 package control;
 
-import java.awt.Color;
+
 import java.awt.Component;
 import java.awt.Dimension;
 
 import java.awt.Font;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
 
 import javax.swing.JLabel;
@@ -25,7 +24,9 @@ public class Main {
 	private static int numberOfPlayers;
 	private static ArrayList<Player> playersArray;
 	private static Board boardGame ;
-	private final static String nameLblDiceRoll = "lblDiceRollValue" , nameLblGamerStatus = "lblGamerStatus";
+	private final static String   nameLblDiceRoll = "lblDiceRollValue" 
+								, nameLblGamerStatus = "lblGamerStatus"
+								, nameLblCard = "lblCard";
 	
 	public static int getNumberOfPlayers(){
 		return numberOfPlayers;
@@ -141,6 +142,11 @@ public class Main {
 		setPlayerStatus(lblGamerStatus);
 		btnJpanel.add(lblGamerStatus);
 		
+		/* Label for display card */
+		JLabel lblCard = new JLabel();
+		lblCard.setName(nameLblCard);
+		lblCard.setBounds(btnJpanel.getHeight()  , btnJpanel.getWidth() , 500, 200);
+		btnJpanel.add(lblCard);
 		
 		/*Buy property Button*/
 		MyButton btnBuyProperty = new MyButton("Comprar Propriedade", btnJpanel);
@@ -188,6 +194,9 @@ public class Main {
 							lbl.setText(rollOne + " " + rollTwo );
 						else if ( lbl.getName().equals(nameLblGamerStatus)) {
 							setPlayerStatus(lbl);
+						}
+						else if ( lbl.getName().equals(nameLblCard)){
+							//lbl.seti
 						}
 					
 					}
@@ -242,5 +251,6 @@ public class Main {
 		return boardGame;
 	}
 
+	
 	
 }

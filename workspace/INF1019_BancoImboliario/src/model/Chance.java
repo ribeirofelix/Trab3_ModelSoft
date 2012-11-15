@@ -16,10 +16,10 @@ public class Chance implements ICard {
 	@Override
 	public void action() {
 		if (operator.equalsIgnoreCase("plus")){
-			//soma value
+			playerOnwer.putMoney(value);
 		}
 		else if (operator.equalsIgnoreCase("minus")){
-			//subtrai value
+			playerOnwer.removeMoney(this.value);
 		}
 	}
 
