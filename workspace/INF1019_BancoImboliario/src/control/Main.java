@@ -28,6 +28,10 @@ public class Main {
 								, nameLblGamerStatus = "lblGamerStatus"
 								, nameLblCard = "lblCard";
 	
+	public static FirstFrame getGameFrame (){
+		return gameFrame;
+	}
+	
 	public static int getNumberOfPlayers(){
 		return numberOfPlayers;
 	}
@@ -38,9 +42,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		gameFrame = new FirstFrame(340, 275, "Escolha o numero de jogadores");
-		bringChooseNumberOfPlayersPanel ();		
-		
-	
+		bringChooseNumberOfPlayersPanel ();	
 		
 	}
 
@@ -156,6 +158,13 @@ public class Main {
 		btnBuyProperty.setBounds(btnJpanel.getHeight() + 80 , btnJpanel.getWidth()/2 , 200, 50);
 		btnJpanel.add(btnBuyProperty);
 		
+		/*Build House Button*/
+		MyButton btnBuildHouse = new MyButton("Construir Casa/Hotel", btnJpanel);
+		btnBuildHouse.addActionListener(gmController);
+		btnBuildHouse.setActionCommand("buildHouse");
+		btnBuildHouse.setEnabled(false);
+		btnBuildHouse.setBounds(btnJpanel.getHeight() + 80, btnJpanel.getWidth()/2 + 60 , 200, 50);
+		btnJpanel.add(btnBuildHouse);
 		
 		gameFrame.add(tablePanel);
 		gameFrame.add(btnJpanel);
@@ -179,10 +188,11 @@ public class Main {
 	}
 
 	public static void updateFrame() {
+	
 		tablePanel.validate();
 		tablePanel.repaint();
-		
 	}
+	
 	public static void showRollDiceAndPlayerStatus(int rollOne, int rollTwo){
 		for (Component comp : gameFrame.getContentPane().getComponents() ) {
 			if(comp instanceof JPanel){
@@ -198,9 +208,7 @@ public class Main {
 						else if ( lbl.getName().equals(nameLblCard)){
 							//lbl.seti
 						}
-					
 					}
-					
 				}
 			}			
 		}
@@ -240,17 +248,28 @@ public class Main {
 					if(compPanl instanceof MyButton && ((MyButton) compPanl).getActionCommand().equals("buyProperty")){
 						((MyButton)compPanl).setEnabled(enable);
 					
+					}		
+				}
+			}			
+		}
+	}
+
+	public static void enableBuildHouseButton(boolean enable){
+		for (Component comp : gameFrame.getContentPane().getComponents() ) {
+			if(comp instanceof JPanel){
+				for (Component compPanl : ((JPanel) comp).getComponents()) {
+					
+					if(compPanl instanceof MyButton && ((MyButton) compPanl).getActionCommand().equals("buildHouse")){
+						((MyButton)compPanl).setEnabled(enable);
+					
 					}
 					
 				}
 			}			
 		}
 	}
-
+	
 	public static Board getBoardGame() {
 		return boardGame;
 	}
-
-	
-	
 }
