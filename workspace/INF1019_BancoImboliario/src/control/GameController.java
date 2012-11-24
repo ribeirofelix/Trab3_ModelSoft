@@ -94,7 +94,7 @@ public class GameController implements ActionListener {
 			Main.enableBuyPropertyButton(false);
 		}
 		
-		
+		Main.ShowCurrentCard();		
 		Main.updateFrame();
 	}
 	

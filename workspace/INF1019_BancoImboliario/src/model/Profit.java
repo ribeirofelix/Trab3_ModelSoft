@@ -1,8 +1,11 @@
 package model;
 
+import java.io.ObjectInputStream.GetField;
+
 public class Profit implements ICard {
 
 	private int value ;
+	private String imagePath = "images//board cards//profit.png";
 	
 	public Profit(int value) {
 		this.value = value;
@@ -12,5 +15,11 @@ public class Profit implements ICard {
 		// TODO Auto-generated method stub
 
 	}
+	@Override
+	public String getImagePath() {
+		return imagePath;
+	}
+	
+	
 
 }
