@@ -26,7 +26,7 @@ public class Main {
 	private static Board boardGame ;
 	private final static String   nameLblDiceRoll = "lblDiceRollValue" 
 								, nameLblGamerStatus = "lblGamerStatus"
-								, nameLblCard = "lblCard";
+								, namePnlCardImage = "pnlCardImage";
 	
 	public static FirstFrame getGameFrame (){
 		return gameFrame;
@@ -112,7 +112,7 @@ public class Main {
 
 	public static void bringGamePanel() {
 		gameFrame.setVisible(false);
-		gameFrame = new FirstFrame(1200, 800, "Banco Imobiliario!");
+		gameFrame = new FirstFrame(1200, 900, "Banco Imobiliario!");
 		
 		tablePanel = new TablePanel(new Dimension(740, 744), gameFrame ,  playersArray );
 		
@@ -139,16 +139,17 @@ public class Main {
 		/* Label for display gamer status */
 		JLabel lblGamerStatus = new JLabel();
 		lblGamerStatus.setName(nameLblGamerStatus);
-		lblGamerStatus.setBounds(btnJpanel.getHeight()  , btnJpanel.getWidth() - 100, 500, 200);
+		lblGamerStatus.setBounds(btnJpanel.getHeight()   , btnJpanel.getWidth() - 200, 500, 200);
 		lblGamerStatus.setFont(new Font(Font.SANS_SERIF, Font.BOLD  , 30));
 		setPlayerStatus(lblGamerStatus);
 		btnJpanel.add(lblGamerStatus);
 		
-		/* Label for display card */
-		JLabel lblCard = new JLabel();
-		lblCard.setName(nameLblCard);
-		lblCard.setBounds(btnJpanel.getHeight()  , btnJpanel.getWidth() , 500, 200);
-		btnJpanel.add(lblCard);
+	
+		/* Panel to show card image*/
+		CardImagePanel pnlCardImage = new CardImagePanel(btnJpanel,null ) ;
+		pnlCardImage.setName(namePnlCardImage);
+		
+		
 		
 		/*Buy property Button*/
 		MyButton btnBuyProperty = new MyButton("Comprar Propriedade", btnJpanel);
@@ -205,15 +206,33 @@ public class Main {
 						else if ( lbl.getName().equals(nameLblGamerStatus)) {
 							setPlayerStatus(lbl);
 						}
+<<<<<<< HEAD
 						else if ( lbl.getName().equals(nameLblCard)){
 							//lbl.seti
 						}
+=======
+					
+>>>>>>> 1483b9a20de0b5bef52d2ef8c32da582202e0ba7
 					}
 				}
 			}			
 		}
 	}
 
+	public static void ShowCurrentCard(){
+		CardImagePanel pnlCardImage = (CardImagePanel)searchComponentInBtnJPanelByName(namePnlCardImage);
+		
+		ICard currntCard = boardGame.getHouseOnThisPosition(getCurrentPlayer().getPosition()).getCard() ;
+		
+		if(currntCard == null){
+			pnlCardImage.setPathImageCard(null);
+		}
+		else{
+			pnlCardImage.setPathImageCard(currntCard.getImagePath());
+		}
+		pnlCardImage.repaint();
+	}
+	
 	private static Component searchComponentInBtnJPanelByName(String name){
 		for (Component comp : gameFrame.getContentPane().getComponents() ) {
 			if(comp instanceof JPanel){
