@@ -26,7 +26,8 @@ public class Main {
 	private static Board boardGame ;
 	private final static String   nameLblDiceRoll = "lblDiceRollValue" 
 								, nameLblGamerStatus = "lblGamerStatus"
-								, namePnlCardImage = "pnlCardImage";
+								, namePnlCardImage = "pnlCardImage"
+								, namwLblOwner = "lblOwnerStatus";
 	
 	public static int getNumberOfPlayers(){
 		return numberOfPlayers;
@@ -110,9 +111,9 @@ public class Main {
 
 	public static void bringGamePanel() {
 		gameFrame.setVisible(false);
-		gameFrame = new FirstFrame(1200, 900, "Banco Imobiliario!");
+		gameFrame = new FirstFrame(1200, 950, "Banco Imobiliario!");
 		
-		tablePanel = new TablePanel(new Dimension(740, 744), gameFrame ,  playersArray );
+		tablePanel = new TablePanel(new Dimension(740, 800), gameFrame ,  playersArray );
 		
 		GameController gmController = new GameController();
 		
@@ -139,7 +140,7 @@ public class Main {
 		lblGamerStatus.setName(nameLblGamerStatus);
 		lblGamerStatus.setBounds(btnJpanel.getHeight()   , btnJpanel.getWidth() - 200, 500, 200);
 		lblGamerStatus.setFont(new Font(Font.SANS_SERIF, Font.BOLD  , 30));
-		setPlayerStatus(lblGamerStatus);
+		setPlayerStatus(lblGamerStatus,getCurrentPlayer());
 		btnJpanel.add(lblGamerStatus);
 		
 	
@@ -147,7 +148,12 @@ public class Main {
 		CardImagePanel pnlCardImage = new CardImagePanel(btnJpanel,null ) ;
 		pnlCardImage.setName(namePnlCardImage);
 		
-		
+		/* Label for show owner status */
+		JLabel lblOwner = new JLabel();
+		lblOwner.setName(namwLblOwner);
+		lblOwner.setBounds(btnJpanel.getHeight()   , pnlCardImage.getY() - 50 + pnlCardImage.getHeight(), 500, 200);
+		lblOwner.setFont(new Font(Font.SANS_SERIF, Font.BOLD  , 30));
+		btnJpanel.add(lblOwner);
 		
 		/*Buy property Button*/
 		MyButton btnBuyProperty = new MyButton("Comprar Propriedade", btnJpanel);
@@ -194,7 +200,7 @@ public class Main {
 						if(lbl.getName().equals(nameLblDiceRoll))
 							lbl.setText(rollOne + " " + rollTwo );
 						else if ( lbl.getName().equals(nameLblGamerStatus)) {
-							setPlayerStatus(lbl);
+							setPlayerStatus(lbl,getCurrentPlayer());
 						}
 					
 					}
@@ -234,11 +240,21 @@ public class Main {
 	
 	public static void updatePlayerStatus(){
 		JLabel lblGamerStatus =  (JLabel)searchComponentInBtnJPanelByName(nameLblGamerStatus);
-		setPlayerStatus(lblGamerStatus);
+		setPlayerStatus(lblGamerStatus,getCurrentPlayer());
 	}
 	
-	private static void setPlayerStatus(JLabel lblGamerStatus) {
-		Player currentGamer = getCurrentPlayer();
+	public static void updatePlayerStatus(Player owner){
+		JLabel lblGamerStatus =  (JLabel)searchComponentInBtnJPanelByName(namwLblOwner);
+		if(owner == null){
+			lblGamerStatus.setText("");
+		}
+		else{
+			setPlayerStatus(lblGamerStatus,owner);
+		}
+	}
+	
+	private static void setPlayerStatus(JLabel lblGamerStatus , Player playerToShow) {
+		Player currentGamer = playerToShow;
 		lblGamerStatus.setForeground(currentGamer.getPivot().getColor());
 		lblGamerStatus.setText("<html>Jogador " + currentGamer.getPivot().toString() + "<br>" +
 				"Dinheiro: " + currentGamer.getAmountOfMoney() + "</html>" );

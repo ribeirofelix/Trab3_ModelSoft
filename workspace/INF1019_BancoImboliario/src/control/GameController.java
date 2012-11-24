@@ -9,6 +9,8 @@ import model.Chance;
 import model.ICard;
 import model.Player;
 import model.Property;
+import model.PropertyCompany;
+import model.PropertyTerrain;
 
 public class GameController implements ActionListener {
 
@@ -41,6 +43,9 @@ public class GameController implements ActionListener {
 		
 		/*If rollDice is clicked , have to set a next player to play. */
 		Main.nextPlayer();		
+		
+		Main.updatePlayerStatus(null);
+		
 		
 		Dice dice = new Dice();
 		int sizeOfWalk = 61;
@@ -87,11 +92,32 @@ public class GameController implements ActionListener {
 		else{
 			if( Main.getBoardGame().isChance(currentPlayer.getPosition()) ){
 				Chance cardChance = Main.getBoardGame().getOneChance();
-				 cardChance.setPlayerOnwer(currentPlayer);
+				cardChance.setPlayerOnwer(currentPlayer);
 				cardChance.action();
-				Main.updatePlayerStatus();
+				
+			}
+			else{
+				Property steppedProperty = Main.getBoardGame().getPropertyAt(currentPlayer.getPosition());
+				
+				if(steppedProperty != null && steppedProperty.getPlayerOwner() != currentPlayer ){
+				
+					int howManyToPay = 0 ;
+					if(steppedProperty instanceof PropertyCompany){
+						howManyToPay = ((PropertyCompany)steppedProperty).multiplyDicePoints( numOfHouses) ;
+					}
+					else{						
+						howManyToPay = ((PropertyTerrain)steppedProperty).getRentValue() ;
+					}
+					currentPlayer.removeMoney(howManyToPay);
+					
+					steppedProperty.getPlayerOwner().putMoney(howManyToPay);
+					Main.updatePlayerStatus(steppedProperty.getPlayerOwner());
+				}
+				
 			}
 			Main.enableBuyPropertyButton(false);
+			Main.updatePlayerStatus();
+			
 		}
 		
 		Main.ShowCurrentCard();		

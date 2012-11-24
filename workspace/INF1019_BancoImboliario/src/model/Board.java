@@ -59,4 +59,19 @@ public class Board {
 		return false;
 	}
 	
+	public void payForIt(int position , Player player){
+		
+		ICard card = houses.get(position).getCard();
+		
+		if(card instanceof Property){
+			Property property = (Property)card;
+			boolean haveToPay = property.getPlayerOwner() == player ? false : true ;
+			if(haveToPay){
+				
+			}
+		}
+		
+		
+	}
+	
 }
