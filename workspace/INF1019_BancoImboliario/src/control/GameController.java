@@ -54,16 +54,7 @@ public class GameController implements ActionListener {
 		Property propertyToBuy = Main.getBoardGame().getPropertyAt(currentPleyer.getPosition());
 		
 		currentPleyer.buyProperty(propertyToBuy);
-		
-		//  mock 
-		currentPleyer.putMoney(5000);
-		buildHouse();
-		buildHouse();
-		buildHouse();
-		buildHouse();
-		buildHouse();
-		// fim mock
-		
+			
 		Main.updatePlayerStatus();
 		Main.enableBuyPropertyButton(false);
 	}
