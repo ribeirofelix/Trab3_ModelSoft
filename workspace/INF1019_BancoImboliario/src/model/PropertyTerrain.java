@@ -25,9 +25,27 @@ public class PropertyTerrain extends Property implements  ICard {
 		this.housePrice = housePrice;
 		this.hotelPrice = hotelPrice;
 		this.price = mortgage * 2;
+		this.numberOfHouses = 0;
 		super.setMortgageValue(mortgage);
 		super.setImagePath(imagePath);
 		
+	}
+	
+	public String getNumberOfHouseOrHotel (){
+		if (this.hasHotel){
+			return "Hotel";
+		}
+		else{
+			if (this.numberOfHouses == 0){
+				return "Aluguel";
+			}
+			
+			if (this.numberOfHouses == 1){
+				return "Uma casa";
+			}
+			
+			return Integer.toString(numberOfHouses) + " casas";
+		}		
 	}
 	
 	public int getRentValue() {
@@ -54,8 +72,7 @@ public class PropertyTerrain extends Property implements  ICard {
 	public boolean buildHouse() {
 		if(!this.hasHotel){
 			
-			if (this.playerOwner.removeMoney(this.housePrice))
-			
+	
 			if (this.numberOfHouses < 4){
 				if (this.playerOwner.removeMoney(this.housePrice)){
 					this.numberOfHouses++;

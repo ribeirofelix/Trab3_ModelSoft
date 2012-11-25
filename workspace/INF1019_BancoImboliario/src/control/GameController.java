@@ -42,6 +42,8 @@ public class GameController implements ActionListener {
 			if (!((PropertyTerrain) playerCard).buildHouse()){
 				JOptionPane.showMessageDialog(Main.getGameFrame(), "Jogador não tem dinheiro suficiente", "Opss", JOptionPane.WARNING_MESSAGE);
 			}
+			
+			Main.enableBuildHouseButton(false);
 		}
 	}
 
@@ -52,7 +54,18 @@ public class GameController implements ActionListener {
 		Property propertyToBuy = Main.getBoardGame().getPropertyAt(currentPleyer.getPosition());
 		
 		currentPleyer.buyProperty(propertyToBuy);
+		
+		//  mock 
+		currentPleyer.putMoney(5000);
+		buildHouse();
+		buildHouse();
+		buildHouse();
+		buildHouse();
+		buildHouse();
+		// fim mock
+		
 		Main.updatePlayerStatus();
+		Main.enableBuyPropertyButton(false);
 	}
 	
 	private void rollDiceAction() {
@@ -71,6 +84,7 @@ public class GameController implements ActionListener {
 		int rollTwo = dice.rollTheDice();
 		int numOfHouses = rollOne + rollTwo;
 		
+		// se os dados forem iguais setar o nextPlayer para o player atual. ele joga de novo
 		
 		Main.showRollDiceAndPlayerStatus(rollOne, rollTwo);
 
@@ -116,8 +130,7 @@ public class GameController implements ActionListener {
 			}
 		}
 		else{
-
-		
+	
 			if( Main.getBoardGame().isPurchasable( currentPlayer.getPosition() ) ){
 				Main.enableBuyPropertyButton(true);
 			}

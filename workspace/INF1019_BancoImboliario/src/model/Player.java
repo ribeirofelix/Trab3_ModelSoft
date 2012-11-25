@@ -40,6 +40,17 @@ public class Player {
 	
 	}
 	
+	public String getNumberOfHousesOrHotel(ICard property){
+			
+		for (Property pro : this.myProperties){
+			
+			if (pro.equals(property) && property instanceof PropertyTerrain){
+				return ((PropertyTerrain)property).getNumberOfHouseOrHotel();
+			}
+		}		
+		
+		return "";
+	}
 	
 	public int getAmountOfMoney (){
 		int amount = 0 ;
@@ -84,14 +95,14 @@ public class Player {
 		return false;
 	}
 
-	public boolean hasProperty(Property propery){
+	public boolean hasProperty(Property property){
 		
-		if (this.myProperties.size() == 0){
+		if (property == null || this.myProperties.size() == 0){
 			return false;
 		}
-				
+		
 		for (Property pro : this.myProperties){
-			if (propery.equals(pro)){
+			if (property.equals(pro)){
 				return true;
 			}
 		}
@@ -173,8 +184,7 @@ public class Player {
 		for (MoneyPack pack  : listPackMoney) {
 			
 			
-			while( ( howMuch / pack.getMoneyType().getValue() ) <= pack.getHowManyNote() && 
-					pack.getAmount() > 0 && ( howMuch / pack.getMoneyType().getValue() ) >= 1   ){
+			while(  ( howMuch / pack.getMoneyType().getValue() ) >= 1   ){
 				
 				int putted ;
 				if ( ( putted = pack.putMoney( (howMuch / pack.getMoneyType().getValue() ) ) ) > 0 ){

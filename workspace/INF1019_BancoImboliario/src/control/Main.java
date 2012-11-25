@@ -266,7 +266,8 @@ public class Main {
 		Player currentGamer = playerToShow;
 		lblGamerStatus.setForeground(currentGamer.getPivot().getColor());
 		lblGamerStatus.setText("<html>Jogador " + currentGamer.getPivot().toString() + "<br>" +
-				"Dinheiro: " + currentGamer.getAmountOfMoney() + "</html>" );
+				"Dinheiro: " + currentGamer.getAmountOfMoney() + "<br>" +
+				currentGamer.getNumberOfHousesOrHotel(boardGame.getHouseOnThisPosition(currentGamer.getPosition()).getCard()) + "</html>" );
 	}
 
 	public static void enableBuyPropertyButton(boolean enable){

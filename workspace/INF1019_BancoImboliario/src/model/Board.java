@@ -75,10 +75,10 @@ public class Board {
 				
 				if (currentHouse instanceof PropertyTerrain){
 					/* If card is from the same group */
-					if (!currentHouseGroup.equalsIgnoreCase(((PropertyTerrain) currentHouse).getGroup())){
+					if (currentHouseGroup.equalsIgnoreCase(((PropertyTerrain) currentHouse).getGroup())){
 						
 						/* Check if player doesn't owns it*/
-						if (!player.equals(((PropertyTerrain) currentHouse).getPlayerOwner())){
+						if (player.getPivot() != ((PropertyTerrain) currentHouse).getPlayerOwner().getPivot()){
 							itCan = false;
 						}
 					}
