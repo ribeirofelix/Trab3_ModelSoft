@@ -4,11 +4,13 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import model.Board;
+import javax.swing.JOptionPane;
+
 import model.Chance;
 import model.ICard;
 import model.Player;
 import model.Property;
+
 import model.PropertyCompany;
 import model.PropertyTerrain;
 
@@ -23,10 +25,24 @@ public class GameController implements ActionListener {
 		case "buyProperty":
 			buyProperty();
 			break;
+		case "buildHouse":
+			buildHouse();
+			break;
 		default:
 			break;
 		}
 		
+	}
+
+	private void buildHouse() {
+		
+		ICard playerCard = Main.getBoardGame().getHouseOnThisPosition(Main.getCurrentPlayer().getPosition()).getCard();
+		
+		if( playerCard instanceof PropertyTerrain){
+			if (!((PropertyTerrain) playerCard).buildHouse()){
+				JOptionPane.showMessageDialog(Main.getGameFrame(), "Jogador não tem dinheiro suficiente", "Opss", JOptionPane.WARNING_MESSAGE);
+			}
+		}
 	}
 
 	private void buyProperty(){
@@ -86,44 +102,62 @@ public class GameController implements ActionListener {
 			currentPlayer.walkOnePosition();
 		}
 		
-		if( Main.getBoardGame().isPurchasable( currentPlayer.getPosition() ) ){
-			Main.enableBuyPropertyButton(true);
-		}
-		else{
-			if( Main.getBoardGame().isChance(currentPlayer.getPosition()) ){
-				Chance cardChance = Main.getBoardGame().getOneChance();
-				cardChance.setPlayerOnwer(currentPlayer);
-				cardChance.action();
+		
+		/* If player already owns the place */
+		if (currentPlayer.hasProperty(Main.getBoardGame().getPropertyAt(currentPlayer.getPosition()))){
+			
+			/* if the player can build a house */
+			if(Main.getBoardGame().canPlayerBuildHouseOnIt(currentPlayer.getPosition(), currentPlayer)){
 				
+				Main.enableBuildHouseButton(true);
 			}
 			else{
-				Property steppedProperty = Main.getBoardGame().getPropertyAt(currentPlayer.getPosition());
-				
-				if(steppedProperty != null && steppedProperty.getPlayerOwner() != currentPlayer ){
-				
-					int howManyToPay = 0 ;
-					if(steppedProperty instanceof PropertyCompany){
-						howManyToPay = ((PropertyCompany)steppedProperty).multiplyDicePoints( numOfHouses) ;
-					}
-					else{						
-						howManyToPay = ((PropertyTerrain)steppedProperty).getRentValue() ;
-					}
-					currentPlayer.removeMoney(howManyToPay);
-					
-					steppedProperty.getPlayerOwner().putMoney(howManyToPay);
-					Main.updatePlayerStatus(steppedProperty.getPlayerOwner());
-				}
-				
+				Main.enableBuildHouseButton(false);
 			}
-			Main.enableBuyPropertyButton(false);
-			Main.updatePlayerStatus();
-			
 		}
+		else{
+
 		
-		Main.ShowCurrentCard();		
-		Main.updateFrame();
-	}
+			if( Main.getBoardGame().isPurchasable( currentPlayer.getPosition() ) ){
+				Main.enableBuyPropertyButton(true);
+			}
+			else{	
+				if( Main.getBoardGame().isChance(currentPlayer.getPosition()) ){
+					Chance cardChance = Main.getBoardGame().getOneChance();
+					cardChance.setPlayerOnwer(currentPlayer);
+					cardChance.action();
+					
+				}
+				else{
+					Property steppedProperty = Main.getBoardGame().getPropertyAt(currentPlayer.getPosition());
+					
+					if(steppedProperty != null && steppedProperty.getPlayerOwner() != currentPlayer ){
+					
+						int howManyToPay = 0 ;
+						if(steppedProperty instanceof PropertyCompany){
+							howManyToPay = ((PropertyCompany)steppedProperty).multiplyDicePoints( numOfHouses) ;
+						}
+						else{						
+							howManyToPay = ((PropertyTerrain)steppedProperty).getRentValue() ;
+						}
+						currentPlayer.removeMoney(howManyToPay);
+						
+						steppedProperty.getPlayerOwner().putMoney(howManyToPay);
+						Main.updatePlayerStatus(steppedProperty.getPlayerOwner());
+					}
+					
+				}
+				Main.enableBuyPropertyButton(false);
+				Main.updatePlayerStatus();
+			}
+		
+		}
 	
+		Main.updateFrame();
+		Main.ShowCurrentCard();
+		
+		
+	}
 	
 	
 	

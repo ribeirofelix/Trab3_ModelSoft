@@ -12,8 +12,10 @@ public class Board {
 		
 		FactoryICard factCards = new FactoryICard();
 		factCards.createAllTheCards();
+		
 		int inx = 0;
 		for (ICard card : factCards.getBoardCards()) {
+			
 			houses.add(new House( inx, card));
 			inx++;
 		}
@@ -59,19 +61,36 @@ public class Board {
 		return false;
 	}
 	
-	public void payForIt(int position , Player player){
+
+	public boolean canPlayerBuildHouseOnIt (int index, Player player){
 		
-		ICard card = houses.get(position).getCard();
+		ICard currentHouse = this.houses.get(index).getCard();
 		
-		if(card instanceof Property){
-			Property property = (Property)card;
-			boolean haveToPay = property.getPlayerOwner() == player ? false : true ;
-			if(haveToPay){
+		if (currentHouse instanceof PropertyTerrain){
+			boolean itCan = true;
+			String currentHouseGroup = ((PropertyTerrain) currentHouse).getGroup();
+			
+			for (int idx = 0; idx < this.houses.size(); idx++){
+				currentHouse = this.houses.get(idx).getCard();
 				
-			}
+				if (currentHouse instanceof PropertyTerrain){
+					/* If card is from the same group */
+					if (!currentHouseGroup.equalsIgnoreCase(((PropertyTerrain) currentHouse).getGroup())){
+						
+						/* Check if player doesn't owns it*/
+						if (!player.equals(((PropertyTerrain) currentHouse).getPlayerOwner())){
+							itCan = false;
+						}
+					}
+				}/*if*/
+				
+			}/*for*/
+			
+			return itCan;
 		}
 		
-		
+		return false;
+
 	}
 	
 }

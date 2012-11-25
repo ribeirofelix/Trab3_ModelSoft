@@ -75,11 +75,5 @@ public class TablePanel extends Panel {
 			g2d.drawImage(buffImagePivot,onePlayer.getPlayerPoint().x , onePlayer.getPlayerPoint().y , buffImagePivot.getWidth() , buffImagePivot.getHeight() , null );
 			
 		}
-		
-		
 	}
-	
-	
-
-	
 }

@@ -51,19 +51,30 @@ public class PropertyTerrain extends Property implements  ICard {
 		
 	}
 
-	public void buildHouse() {
-		if(!hasHotel){
-			if (numberOfHouses < 4){
-				numberOfHouses++;
+	public boolean buildHouse() {
+		if(!this.hasHotel){
 			
+			if (this.playerOwner.removeMoney(this.housePrice))
+			
+			if (this.numberOfHouses < 4){
+				if (this.playerOwner.removeMoney(this.housePrice)){
+					this.numberOfHouses++;
+					
+					return true;
+				}
 			}
+			
 			else {
-				hasHotel = true;
-
+				
+				if (this.playerOwner.removeMoney(this.hotelPrice)){
+					this.hasHotel = true;
+					
+					return true;
+				}				
 			}
-		
-			//debita do fdp
 		}
+		
+		return false;
 	}
 
 	public int getHouseNumber() {

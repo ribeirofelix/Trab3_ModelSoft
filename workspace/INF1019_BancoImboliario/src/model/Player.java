@@ -84,6 +84,21 @@ public class Player {
 		return false;
 	}
 
+	public boolean hasProperty(Property propery){
+		
+		if (this.myProperties.size() == 0){
+			return false;
+		}
+				
+		for (Property pro : this.myProperties){
+			if (propery.equals(pro)){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	public boolean removeMoney(int howMuch){
 		
 		if(howMuch <= getAmountOfMoney() ){

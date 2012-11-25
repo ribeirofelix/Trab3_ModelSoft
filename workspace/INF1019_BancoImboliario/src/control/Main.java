@@ -29,6 +29,10 @@ public class Main {
 								, namePnlCardImage = "pnlCardImage"
 								, namwLblOwner = "lblOwnerStatus";
 	
+	public static FirstFrame getGameFrame (){
+		return gameFrame;
+	}
+	
 	public static int getNumberOfPlayers(){
 		return numberOfPlayers;
 	}
@@ -39,9 +43,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		gameFrame = new FirstFrame(340, 275, "Escolha o numero de jogadores");
-		bringChooseNumberOfPlayersPanel ();		
-		
-	
+		bringChooseNumberOfPlayersPanel ();	
 		
 	}
 
@@ -138,7 +140,7 @@ public class Main {
 		/* Label for display gamer status */
 		JLabel lblGamerStatus = new JLabel();
 		lblGamerStatus.setName(nameLblGamerStatus);
-		lblGamerStatus.setBounds(btnJpanel.getHeight()   , btnJpanel.getWidth() - 200, 500, 200);
+		lblGamerStatus.setBounds(btnJpanel.getHeight()   , btnJpanel.getWidth() - 150, 500, 200);
 		lblGamerStatus.setFont(new Font(Font.SANS_SERIF, Font.BOLD  , 30));
 		setPlayerStatus(lblGamerStatus,getCurrentPlayer());
 		btnJpanel.add(lblGamerStatus);
@@ -149,7 +151,7 @@ public class Main {
 		pnlCardImage.setName(namePnlCardImage);
 		
 		/* Label for show owner status */
-		JLabel lblOwner = new JLabel();
+		JLabel lblOwner = new JLabel("lol");
 		lblOwner.setName(namwLblOwner);
 		lblOwner.setBounds(btnJpanel.getHeight()   , pnlCardImage.getY() - 50 + pnlCardImage.getHeight(), 500, 200);
 		lblOwner.setFont(new Font(Font.SANS_SERIF, Font.BOLD  , 30));
@@ -163,6 +165,13 @@ public class Main {
 		btnBuyProperty.setBounds(btnJpanel.getHeight() + 80 , btnJpanel.getWidth()/2 , 200, 50);
 		btnJpanel.add(btnBuyProperty);
 		
+		/*Build House Button*/
+		MyButton btnBuildHouse = new MyButton("Construir Casa/Hotel", btnJpanel);
+		btnBuildHouse.addActionListener(gmController);
+		btnBuildHouse.setActionCommand("buildHouse");
+		btnBuildHouse.setEnabled(false);
+		btnBuildHouse.setBounds(btnJpanel.getHeight() + 80, btnJpanel.getWidth()/2 + 60 , 200, 50);
+		btnJpanel.add(btnBuildHouse);
 		
 		gameFrame.add(tablePanel);
 		gameFrame.add(btnJpanel);
@@ -186,10 +195,11 @@ public class Main {
 	}
 
 	public static void updateFrame() {
+	
 		tablePanel.validate();
 		tablePanel.repaint();
-		
 	}
+	
 	public static void showRollDiceAndPlayerStatus(int rollOne, int rollTwo){
 		for (Component comp : gameFrame.getContentPane().getComponents() ) {
 			if(comp instanceof JPanel){
@@ -202,9 +212,8 @@ public class Main {
 						else if ( lbl.getName().equals(nameLblGamerStatus)) {
 							setPlayerStatus(lbl,getCurrentPlayer());
 						}
-					
+
 					}
-					
 				}
 			}			
 		}
@@ -268,17 +277,28 @@ public class Main {
 					if(compPanl instanceof MyButton && ((MyButton) compPanl).getActionCommand().equals("buyProperty")){
 						((MyButton)compPanl).setEnabled(enable);
 					
+					}		
+				}
+			}			
+		}
+	}
+
+	public static void enableBuildHouseButton(boolean enable){
+		for (Component comp : gameFrame.getContentPane().getComponents() ) {
+			if(comp instanceof JPanel){
+				for (Component compPanl : ((JPanel) comp).getComponents()) {
+					
+					if(compPanl instanceof MyButton && ((MyButton) compPanl).getActionCommand().equals("buildHouse")){
+						((MyButton)compPanl).setEnabled(enable);
+					
 					}
 					
 				}
 			}			
 		}
 	}
-
+	
 	public static Board getBoardGame() {
 		return boardGame;
 	}
-
-	
-	
 }

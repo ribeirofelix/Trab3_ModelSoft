@@ -19,7 +19,7 @@ public class CardImagePanel extends JPanel {
 	
 	public CardImagePanel(JPanel contPanel , String pathImageCard ) {
 		super();
-		this.setBounds(contPanel.getHeight(), contPanel.getWidth() -50, 300, 270);
+		this.setBounds(contPanel.getHeight(), contPanel.getY()-275 , 300, 270);
 		this.setVisible(true);
 		setPathImageCard(pathImageCard);
 		contPanel.add(this);
