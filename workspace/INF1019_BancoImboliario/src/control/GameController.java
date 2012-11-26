@@ -75,7 +75,9 @@ public class GameController implements ActionListener {
 		int rollTwo = dice.rollTheDice();
 		int numOfHouses = rollOne + rollTwo;
 		
-		// se os dados forem iguais setar o nextPlayer para o player atual. ele joga de novo
+		/* If the rolls was the same. Play Again */
+		if(rollOne == rollTwo)
+			Main.repeatPlayer();
 		
 		Main.showRollDiceAndPlayerStatus(rollOne, rollTwo);
 

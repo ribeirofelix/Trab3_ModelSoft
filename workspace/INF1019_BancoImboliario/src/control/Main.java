@@ -28,6 +28,7 @@ public class Main {
 								, nameLblGamerStatus = "lblGamerStatus"
 								, namePnlCardImage = "pnlCardImage"
 								, namwLblOwner = "lblOwnerStatus";
+	private static boolean playAgain = false ;
 	
 	public static FirstFrame getGameFrame (){
 		return gameFrame;
@@ -187,7 +188,10 @@ public class Main {
 	}
 	
 	public static void nextPlayer(){
-		currentPlayer++;
+		if(playAgain)
+			playAgain = false ;		
+		else
+			currentPlayer++;
 		
 		if (currentPlayer == numberOfPlayers){
 			currentPlayer = 0;
@@ -301,5 +305,10 @@ public class Main {
 	
 	public static Board getBoardGame() {
 		return boardGame;
+	}
+	
+	public static void repeatPlayer(){
+		playAgain = true ;
+		
 	}
 }

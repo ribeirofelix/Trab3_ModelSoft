@@ -21,8 +21,6 @@ public class MyJPanel extends JPanel {
 		frame.add(this);
 		
 	}
-	
-	
 
 	
 
