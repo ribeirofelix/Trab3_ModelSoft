@@ -3,6 +3,7 @@ package model;
 import java.util.List;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -229,4 +230,15 @@ public class Player {
 			}
 		}		
 	}
+
+	
+	public String[] getPropertiesNames(){
+		List<String> names = new ArrayList<>();
+		
+		for (Property prop : this.myProperties) {
+			names.add(prop.getName());
+		}
+		return  names.toArray(new String[0]);
+	}
+
 }

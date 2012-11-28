@@ -1,7 +1,9 @@
 package model;
 
+
 public abstract class Property {
 	
+	protected String name ;
 	protected String imagePath;
 	protected int mortgageValue;
 	protected Player playerOwner;
@@ -11,6 +13,7 @@ public abstract class Property {
 		return imagePath;
 	}
 	public void setImagePath(String imagePath) {
+		this.name = imagePath.substring(imagePath.lastIndexOf("//")+1);
 		this.imagePath = imagePath;
 	}
 	public int getMortgageValue() {
@@ -28,6 +31,8 @@ public abstract class Property {
 	public int getPrice() {
 		return price;
 	}
-	
+	public String getName(){
+		return this.name;
+	}
 
 }

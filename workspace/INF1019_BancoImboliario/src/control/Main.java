@@ -7,8 +7,10 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -27,7 +29,9 @@ public class Main {
 	private final static String   nameLblDiceRoll = "lblDiceRollValue" 
 								, nameLblGamerStatus = "lblGamerStatus"
 								, namePnlCardImage = "pnlCardImage"
-								, namwLblOwner = "lblOwnerStatus";
+								, nameLblOwner = "lblOwnerStatus"
+								, nameCmbProperties = "cmbProperties"
+								, nameCmbPlayerToNegociate = "cmbPlayerToNegociate";
 	private static boolean playAgain = false ;
 	
 	public static FirstFrame getGameFrame (){
@@ -114,68 +118,92 @@ public class Main {
 
 	public static void bringGamePanel() {
 		gameFrame.setVisible(false);
-		gameFrame = new FirstFrame(1200, 950, "Banco Imobiliario!");
+		gameFrame = new FirstFrame(1500, 990, "Banco Imobiliario!");
 		
 		tablePanel = new TablePanel(new Dimension(740, 800), gameFrame ,  playersArray );
 		
 		GameController gmController = new GameController();
 		
 		/*Button Panel*/
-		MyJPanel btnJpanel = new MyJPanel(new Point(0,744), new Dimension(460, 800) , gameFrame);
-		//btnJpanel.setLayout(new FlowLayout());
-		
+		MyJPanel pnlMenuPlayer = new MyJPanel(new Point(0,744), new Dimension(460, 800) , gameFrame);
+
+
 		/*Roll dice button */
-		MyButton btnRollDice = new MyButton("Rolar os Dados", btnJpanel);		
+		MyButton btnRollDice = new MyButton("Rolar os Dados", pnlMenuPlayer);		
 		btnRollDice.addActionListener(gmController);
-		btnRollDice.setActionCommand("rollDices");
-		btnRollDice.setBounds(btnJpanel.getHeight() + 80 , btnJpanel.getWidth()/8 , 200, 50);
-		btnJpanel.add(btnRollDice);
+		btnRollDice.setActionCommand(ActionCommand.RollDices.name());
+		btnRollDice.setBounds(pnlMenuPlayer.getHeight() + 80 , pnlMenuPlayer.getWidth()/8 , 200, 50);
+		pnlMenuPlayer.add(btnRollDice);
 		
 		/*Dice roll value*/
 		JLabel lblDiceRollValue = new JLabel();
 		lblDiceRollValue.setName( nameLblDiceRoll);
-		lblDiceRollValue.setBounds(btnJpanel.getHeight() + 80 , btnJpanel.getWidth()/4 , 200, 50);
+		lblDiceRollValue.setBounds(pnlMenuPlayer.getHeight() + 80 , pnlMenuPlayer.getWidth()/4 , 200, 50);
 		lblDiceRollValue.setFont(new Font(Font.SANS_SERIF, Font.BOLD  , 50));
-		btnJpanel.add(lblDiceRollValue);
+		pnlMenuPlayer.add(lblDiceRollValue);
 	
 		/* Label for display gamer status */
 		JLabel lblGamerStatus = new JLabel();
 		lblGamerStatus.setName(nameLblGamerStatus);
-		lblGamerStatus.setBounds(btnJpanel.getHeight()   , btnJpanel.getWidth() - 150, 500, 200);
+		lblGamerStatus.setBounds(pnlMenuPlayer.getHeight()   , pnlMenuPlayer.getWidth() - 150, 500, 200);
 		lblGamerStatus.setFont(new Font(Font.SANS_SERIF, Font.BOLD  , 30));
 		setPlayerStatus(lblGamerStatus,getCurrentPlayer());
-		btnJpanel.add(lblGamerStatus);
+		pnlMenuPlayer.add(lblGamerStatus);
 		
 	
 		/* Panel to show card image*/
-		CardImagePanel pnlCardImage = new CardImagePanel(btnJpanel,null ) ;
+		CardImagePanel pnlCardImage = new CardImagePanel(pnlMenuPlayer,null ) ;
 		pnlCardImage.setName(namePnlCardImage);
 		
 		/* Label for show owner status */
-		JLabel lblOwner = new JLabel("lol");
-		lblOwner.setName(namwLblOwner);
-		lblOwner.setBounds(btnJpanel.getHeight()   , pnlCardImage.getY() - 50 + pnlCardImage.getHeight(), 500, 200);
+		JLabel lblOwner = new JLabel();
+		lblOwner.setName(nameLblOwner);
+		lblOwner.setBounds(pnlMenuPlayer.getHeight()   , pnlCardImage.getY() - 50 + pnlCardImage.getHeight(), 500, 200);
 		lblOwner.setFont(new Font(Font.SANS_SERIF, Font.BOLD  , 30));
-		btnJpanel.add(lblOwner);
+		pnlMenuPlayer.add(lblOwner);
 		
 		/*Buy property Button*/
-		MyButton btnBuyProperty = new MyButton("Comprar Propriedade", btnJpanel);
+		MyButton btnBuyProperty = new MyButton("Comprar Propriedade", pnlMenuPlayer);
 		btnBuyProperty.addActionListener(gmController);
-		btnBuyProperty.setActionCommand("buyProperty");
+		btnBuyProperty.setActionCommand(ActionCommand.BuyProperty.name());
 		btnBuyProperty.setEnabled(false);
-		btnBuyProperty.setBounds(btnJpanel.getHeight() + 80 , btnJpanel.getWidth()/2 , 200, 50);
-		btnJpanel.add(btnBuyProperty);
+		btnBuyProperty.setBounds(pnlMenuPlayer.getHeight() + 80 , pnlMenuPlayer.getWidth()/2 , 200, 50);
+		pnlMenuPlayer.add(btnBuyProperty);
 		
 		/*Build House Button*/
-		MyButton btnBuildHouse = new MyButton("Construir Casa/Hotel", btnJpanel);
+		MyButton btnBuildHouse = new MyButton("Construir Casa/Hotel", pnlMenuPlayer);
 		btnBuildHouse.addActionListener(gmController);
-		btnBuildHouse.setActionCommand("buildHouse");
+		btnBuildHouse.setActionCommand(ActionCommand.BuildHouse.name());
 		btnBuildHouse.setEnabled(false);
-		btnBuildHouse.setBounds(btnJpanel.getHeight() + 80, btnJpanel.getWidth()/2 + 60 , 200, 50);
-		btnJpanel.add(btnBuildHouse);
+		btnBuildHouse.setBounds(pnlMenuPlayer.getHeight() + 80, pnlMenuPlayer.getWidth()/2 + 60 , 200, 50);
+		pnlMenuPlayer.add(btnBuildHouse);
+		
+		/* Choose Negociation (Sell or Buy) ComboBox */
+		JComboBox<Negociation> cmbNegociation = new JComboBox<>(Negociation.values());
+		cmbNegociation.setActionCommand(ActionCommand.ChooseNegociationType.name());
+		cmbNegociation.setBounds(pnlMenuPlayer.getHeight() , lblOwner.getY() + lblOwner.getHeight() - 30 , 50, 35);
+		cmbNegociation.addActionListener(gmController);
+		pnlMenuPlayer.add(cmbNegociation);
+		
+		/* Choose Player to Negociate ComboBox */
+		JComboBox<Pivot> cmbPlayersToNegociate = new JComboBox<>(Pivot.values() );
+		cmbPlayersToNegociate.setBounds(cmbNegociation.getX() + cmbNegociation.getWidth() + 10 , lblOwner.getY() + lblOwner.getHeight() - 30 , 100, 35);
+		//cmbPlayersToNegociate.addActionListener(gmController);
+		cmbPlayersToNegociate.setName(nameCmbPlayerToNegociate);
+		pnlMenuPlayer.add(cmbPlayersToNegociate);
+		
+		/* Choose Property to Negociate ComboBox */
+		JComboBox<String> cmbPropertiesNames = new JComboBox<String>(getCurrentPlayer().getPropertiesNames());
+		cmbPropertiesNames.setBounds(cmbPlayersToNegociate.getX() + cmbPlayersToNegociate.getWidth() + 10 , lblOwner.getY() + lblOwner.getHeight() - 30 , 200, 35);
+		cmbPropertiesNames.setName(nameCmbProperties);
+		//cmbPropertiesNames.addActionListener(gmController);
+		pnlMenuPlayer.add(cmbPropertiesNames);
+		
+		
+		
 		
 		gameFrame.add(tablePanel);
-		gameFrame.add(btnJpanel);
+		gameFrame.add(pnlMenuPlayer);
 		gameFrame.setVisible(true);	
 		
 	}
@@ -257,7 +285,7 @@ public class Main {
 	}
 	
 	public static void updatePlayerStatus(Player owner){
-		JLabel lblGamerStatus =  (JLabel)searchComponentInBtnJPanelByName(namwLblOwner);
+		JLabel lblGamerStatus =  (JLabel)searchComponentInBtnJPanelByName(nameLblOwner);
 		if(owner == null){
 			lblGamerStatus.setText("");
 		}
@@ -279,7 +307,7 @@ public class Main {
 			if(comp instanceof JPanel){
 				for (Component compPanl : ((JPanel) comp).getComponents()) {
 					
-					if(compPanl instanceof MyButton && ((MyButton) compPanl).getActionCommand().equals("buyProperty")){
+					if(compPanl instanceof MyButton && ((MyButton) compPanl).getActionCommand().equals(ActionCommand.BuyProperty.name())){
 						((MyButton)compPanl).setEnabled(enable);
 					
 					}		
@@ -293,7 +321,7 @@ public class Main {
 			if(comp instanceof JPanel){
 				for (Component compPanl : ((JPanel) comp).getComponents()) {
 					
-					if(compPanl instanceof MyButton && ((MyButton) compPanl).getActionCommand().equals("buildHouse")){
+					if(compPanl instanceof MyButton && ((MyButton) compPanl).getActionCommand().equals(ActionCommand.BuildHouse.name())){
 						((MyButton)compPanl).setEnabled(enable);
 					
 					}
@@ -309,6 +337,36 @@ public class Main {
 	
 	public static void repeatPlayer(){
 		playAgain = true ;
+		
+	}
+
+	
+	public static void updateNegotiablesProperties(Negociation negType){
+		/*Get the Combobox by Name and clean it*/
+		JComboBox<String> cmbProperties = (JComboBox<String>) searchComponentInBtnJPanelByName(nameCmbProperties);
+		cmbProperties.removeAllItems();
+		
+		String [] propNames = null ;
+		/*If the player want to Sell , show its properties */
+		if(negType == Negociation.Sell){	
+			propNames = getCurrentPlayer().getPropertiesNames();
+		}
+		else{/*Else, get the selected player to negociate, and show its properties */
+			
+			Pivot choosen = (Pivot) ((JComboBox<Pivot>)searchComponentInBtnJPanelByName(nameCmbPlayerToNegociate) ).getSelectedItem();
+			
+			for (Player player : playersArray) {
+				if( choosen.compareTo(player.getPivot()) == 0 ){
+					propNames = player.getPropertiesNames();
+					break;
+				}
+			}
+				
+		}
+		/*Update the ComboBox*/
+		for (String nameProperty : propNames) {
+			cmbProperties.addItem(nameProperty);
+		}
 		
 	}
 }

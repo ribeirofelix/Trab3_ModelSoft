@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 import model.Chance;
@@ -18,20 +19,28 @@ public class GameController implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		switch (e.getActionCommand()) {
-		case "rollDices":
+		switch (ActionCommand.valueOf(e.getActionCommand())) {
+		case RollDices:
 			rollDiceAction();
 			break;
-		case "buyProperty":
+		case BuyProperty:
 			buyProperty();
 			break;
-		case "buildHouse":
+		case BuildHouse:
 			buildHouse();
 			break;
+		case ChooseNegociationType:
+			chosseNegociationType( (JComboBox<Negociation>) e.getSource());
 		default:
 			break;
 		}
 		
+	}
+	
+	private void chosseNegociationType(JComboBox<Negociation> comboNegociation ){
+		Negociation  negType = (Negociation)comboNegociation.getSelectedItem();
+		Main.updateNegotiablesProperties(negType);
+		return;
 	}
 
 	private void buildHouse() {
