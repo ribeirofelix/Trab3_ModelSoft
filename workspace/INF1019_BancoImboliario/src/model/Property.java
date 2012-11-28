@@ -13,7 +13,7 @@ public abstract class Property {
 		return imagePath;
 	}
 	public void setImagePath(String imagePath) {
-		this.name = imagePath.substring(imagePath.lastIndexOf("//")+1);
+		this.name = imagePath.substring(imagePath.lastIndexOf("/") ).replaceAll(".png", "").replaceFirst("/", "");
 		this.imagePath = imagePath;
 	}
 	public int getMortgageValue() {

@@ -93,4 +93,19 @@ public class Board {
 
 	}
 	
+	public Property getPropertyByName(String name){
+		
+		
+		for (House currHouse : this.houses) {
+			
+			if(currHouse.getCard() instanceof Property){
+				if( ( (Property)currHouse.getCard() ).getName().equals(name) ){
+					return  ( Property)currHouse.getCard();
+				}
+			}
+		}
+		return null;
+		
+	}
+	
 }

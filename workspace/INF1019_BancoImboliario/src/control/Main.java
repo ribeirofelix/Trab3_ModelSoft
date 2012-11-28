@@ -6,6 +6,7 @@ import java.awt.Dimension;
 
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.font.NumericShaper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -13,6 +14,7 @@ import java.util.EnumSet;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import view.*;
 import model.*;
@@ -31,8 +33,13 @@ public class Main {
 								, namePnlCardImage = "pnlCardImage"
 								, nameLblOwner = "lblOwnerStatus"
 								, nameCmbProperties = "cmbProperties"
-								, nameCmbPlayerToNegociate = "cmbPlayerToNegociate";
+								, nameCmbPlayerToNegociate = "cmbPlayerToNegociate"
+								, nameCmbNegType = "cmbNegType"
+								, valueTxt = "valueTxt";
 	private static boolean playAgain = false ;
+	private static int rounds = 0 ;
+	
+	
 	
 	public static FirstFrame getGameFrame (){
 		return gameFrame;
@@ -182,25 +189,39 @@ public class Main {
 		JComboBox<Negociation> cmbNegociation = new JComboBox<>(Negociation.values());
 		cmbNegociation.setActionCommand(ActionCommand.ChooseNegociationType.name());
 		cmbNegociation.setBounds(pnlMenuPlayer.getHeight() , lblOwner.getY() + lblOwner.getHeight() - 30 , 50, 35);
+		cmbNegociation.setName(nameCmbNegType);
 		cmbNegociation.addActionListener(gmController);
 		pnlMenuPlayer.add(cmbNegociation);
 		
 		/* Choose Player to Negociate ComboBox */
 		JComboBox<Pivot> cmbPlayersToNegociate = new JComboBox<>(Pivot.values() );
 		cmbPlayersToNegociate.setBounds(cmbNegociation.getX() + cmbNegociation.getWidth() + 10 , lblOwner.getY() + lblOwner.getHeight() - 30 , 100, 35);
-		//cmbPlayersToNegociate.addActionListener(gmController);
+		cmbPlayersToNegociate.addActionListener(gmController);
+		cmbPlayersToNegociate.setActionCommand(ActionCommand.ShowPropertiesOfSeller.name());
 		cmbPlayersToNegociate.setName(nameCmbPlayerToNegociate);
 		pnlMenuPlayer.add(cmbPlayersToNegociate);
 		
-		/* Choose Property to Negociate ComboBox */
+		/* Choose Property to Negotiate ComboBox */
 		JComboBox<String> cmbPropertiesNames = new JComboBox<String>(getCurrentPlayer().getPropertiesNames());
 		cmbPropertiesNames.setBounds(cmbPlayersToNegociate.getX() + cmbPlayersToNegociate.getWidth() + 10 , lblOwner.getY() + lblOwner.getHeight() - 30 , 200, 35);
 		cmbPropertiesNames.setName(nameCmbProperties);
 		//cmbPropertiesNames.addActionListener(gmController);
 		pnlMenuPlayer.add(cmbPropertiesNames);
 		
+		/* Input the value */
+		JTextField value = new JTextField();
+		value.setBounds(cmbPropertiesNames.getX() + cmbPropertiesNames.getWidth() + 10, lblOwner.getY() + lblOwner.getHeight() - 30, 100, 35);
+		value.setName(valueTxt);
+		pnlMenuPlayer.add(value);
 		
+		/* Do it button */
+		MyButton doItBtn = new MyButton("Aceito", pnlMenuPlayer);
+		doItBtn.setBounds(value.getX() + value.getWidth() + 10, lblOwner.getY() + lblOwner.getHeight() - 30, 100, 35);
+		doItBtn.setActionCommand(ActionCommand.FinalizeNegociation.name());
+		doItBtn.addActionListener(gmController);
+		pnlMenuPlayer.add(doItBtn);
 		
+		rounds ++;
 		
 		gameFrame.add(tablePanel);
 		gameFrame.add(pnlMenuPlayer);
@@ -222,6 +243,7 @@ public class Main {
 			currentPlayer++;
 		
 		if (currentPlayer == numberOfPlayers){
+			rounds++;
 			currentPlayer = 0;
 		}
 	}
@@ -340,27 +362,48 @@ public class Main {
 		
 	}
 
+	public static void removeMeFromNegociation(){
+		JComboBox<Pivot> cmbPlayers = (JComboBox<Pivot> ) searchComponentInBtnJPanelByName(nameCmbPlayerToNegociate) ;
+		
+		Player prevPlayer = null ;
+		
+		if(rounds == 1 && currentPlayer == 0 ){
+			cmbPlayers.removeItem(getCurrentPlayer().getPivot());
+			return;
+		}
+		
+		if(currentPlayer == 0){
+			prevPlayer = playersArray.get(numberOfPlayers-1);
+		}
+		else{
+			prevPlayer = playersArray.get(currentPlayer-1);
+		}
+		cmbPlayers.removeItem(getCurrentPlayer().getPivot());
+		cmbPlayers.addItem(prevPlayer.getPivot());
+		
+		
+		
+	}
 	
-	public static void updateNegotiablesProperties(Negociation negType){
-		/*Get the Combobox by Name and clean it*/
+	public static void updateNegotiablesProperties(){
+		
+		Negociation negType = (Negociation) ( (JComboBox<Negociation>) searchComponentInBtnJPanelByName(nameCmbNegType) ).getSelectedItem();
+		
+		/*Get the Combobox Properties by Name and clean it*/
 		JComboBox<String> cmbProperties = (JComboBox<String>) searchComponentInBtnJPanelByName(nameCmbProperties);
 		cmbProperties.removeAllItems();
+		
+		/*Get the Combobox Players by Name */
+		JComboBox<Pivot> cmbPlayers = (JComboBox<Pivot> ) searchComponentInBtnJPanelByName(nameCmbPlayerToNegociate) ;		
 		
 		String [] propNames = null ;
 		/*If the player want to Sell , show its properties */
 		if(negType == Negociation.Sell){	
-			propNames = getCurrentPlayer().getPropertiesNames();
+			propNames = getCurrentPlayer().getPropertiesNames();		
 		}
 		else{/*Else, get the selected player to negociate, and show its properties */
 			
-			Pivot choosen = (Pivot) ((JComboBox<Pivot>)searchComponentInBtnJPanelByName(nameCmbPlayerToNegociate) ).getSelectedItem();
-			
-			for (Player player : playersArray) {
-				if( choosen.compareTo(player.getPivot()) == 0 ){
-					propNames = player.getPropertiesNames();
-					break;
-				}
-			}
+			propNames = getSelectedPlayerByPivot(cmbPlayers).getPropertiesNames();
 				
 		}
 		/*Update the ComboBox*/
@@ -369,4 +412,75 @@ public class Main {
 		}
 		
 	}
+
+	private static Player getSelectedPlayerByPivot(JComboBox<Pivot> cmbPlayers) {
+		Pivot choosen = (Pivot) cmbPlayers.getSelectedItem();
+		
+		
+		for (Player player : playersArray) {
+			if( choosen.compareTo(player.getPivot()) == 0 ){
+				return player;
+			}
+		}
+		return null;
+	}
+
+
+	public static void showSellerProperties(){
+		
+		if( ( Negociation)( (  JComboBox<Negociation>)searchComponentInBtnJPanelByName(nameCmbNegType) ).getSelectedItem() == Negociation.Sell)
+			return ;
+		
+		/*Get the Combobox Properties by Name and clean it*/
+		JComboBox<String> cmbProperties = (JComboBox<String>) searchComponentInBtnJPanelByName(nameCmbProperties);
+		cmbProperties.removeAllItems();
+		
+		/*Get the Combobox Players by Name */
+		JComboBox<Pivot> cmbPlayers = (JComboBox<Pivot> ) searchComponentInBtnJPanelByName(nameCmbPlayerToNegociate) ;		
+		
+		String [] proNames = getSelectedPlayerByPivot(cmbPlayers).getPropertiesNames();
+		
+		for (String nameProp : proNames) {
+			cmbProperties.addItem(nameProp);
+		}
+		
+		
+	}
+
+	public static void negotiateProperty() {
+		String value = ((JTextField) searchComponentInBtnJPanelByName(valueTxt)).getText();
+		if(value.matches("((-|\\+)?[0-9])+")){
+			int money = Integer.parseInt(value);
+			
+			Player playerSelected = getSelectedPlayerByPivot((JComboBox<Pivot>)searchComponentInBtnJPanelByName(nameCmbPlayerToNegociate));
+			
+			JComboBox<String> cmbProperties = (JComboBox<String> )searchComponentInBtnJPanelByName(nameCmbProperties);
+			Property propSelected = boardGame.getPropertyByName((String)cmbProperties.getSelectedItem());
+			if(propSelected != null){
+				/*If the property is of the selected player. 
+				 * He's selling his property. So, he wins money. */
+				if(playerSelected.hasProperty(propSelected)){
+					playerSelected.removeProperty(propSelected);
+					playerSelected.putMoney(money);
+					
+					getCurrentPlayer().removeMoney(money);
+					getCurrentPlayer().addProperty(propSelected);
+				}
+				else{
+					
+					getCurrentPlayer().removeProperty(propSelected);
+					getCurrentPlayer().putMoney(money);
+					
+					playerSelected.removeMoney(money);
+					playerSelected.addProperty(propSelected);					
+					
+				}
+			}
+			updatePlayerStatus();
+			updateNegotiablesProperties();
+			
+		}
+		
+	}
+
 }

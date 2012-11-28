@@ -231,7 +231,6 @@ public class Player {
 		}		
 	}
 
-	
 	public String[] getPropertiesNames(){
 		List<String> names = new ArrayList<>();
 		
@@ -239,6 +238,17 @@ public class Player {
 			names.add(prop.getName());
 		}
 		return  names.toArray(new String[0]);
+	}
+	
+	public void removeProperty(Property propertyToRemove){
+		if(hasProperty(propertyToRemove)){
+			this.myProperties.remove(propertyToRemove);
+		}
+		
+	}
+
+	public void addProperty(Property property){
+		this.myProperties.add(property);
 	}
 
 }

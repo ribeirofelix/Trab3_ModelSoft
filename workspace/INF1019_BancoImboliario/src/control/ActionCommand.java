@@ -5,8 +5,9 @@ public enum ActionCommand {
 	RollDices("roll"),
 	BuyProperty("buy"),
 	BuildHouse("build"),
-	ChooseNegociationType("negType");
-	
+	ChooseNegociationType("negType"),
+	ShowPropertiesOfSeller("showPropSeller"),
+	FinalizeNegociation("finalizeNeg");
 	
 	private String value;
 	private ActionCommand(String value){

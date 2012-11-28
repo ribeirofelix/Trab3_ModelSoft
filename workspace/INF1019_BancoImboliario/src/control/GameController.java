@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 import model.Chance;
 import model.ICard;
@@ -30,17 +31,19 @@ public class GameController implements ActionListener {
 			buildHouse();
 			break;
 		case ChooseNegociationType:
-			chosseNegociationType( (JComboBox<Negociation>) e.getSource());
+			Main.updateNegotiablesProperties();
+			break;
+		case ShowPropertiesOfSeller:
+			Main.showSellerProperties();
+			break;
+		case FinalizeNegociation:
+			
+			Main.negotiateProperty();
+			break;
 		default:
 			break;
 		}
 		
-	}
-	
-	private void chosseNegociationType(JComboBox<Negociation> comboNegociation ){
-		Negociation  negType = (Negociation)comboNegociation.getSelectedItem();
-		Main.updateNegotiablesProperties(negType);
-		return;
 	}
 
 	private void buildHouse() {
@@ -74,7 +77,7 @@ public class GameController implements ActionListener {
 		Main.nextPlayer();		
 		
 		Main.updatePlayerStatus(null);
-		
+		Main.removeMeFromNegociation();
 		
 		Dice dice = new Dice();
 		int sizeOfWalk = 61;

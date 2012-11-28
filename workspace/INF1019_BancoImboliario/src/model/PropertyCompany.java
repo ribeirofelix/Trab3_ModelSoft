@@ -7,8 +7,9 @@ public class PropertyCompany extends Property implements  ICard {
 	public PropertyCompany (String path , int mortgage ,int multiplier){
 		this.multiplier = multiplier;
 		this.price = mortgage * 2 ;
-		this.mortgageValue = mortgage;
-		this.imagePath = path;
+		super.setImagePath(path);
+		super.setMortgageValue(mortgage);
+		
 	}
 	
 	@Override
