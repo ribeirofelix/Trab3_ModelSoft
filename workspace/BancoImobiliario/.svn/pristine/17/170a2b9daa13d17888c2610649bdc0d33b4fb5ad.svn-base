@@ -1,0 +1,803 @@
+package com.monopoly.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import com.monopoly.exceptions.InvalidTerrainException;
+import com.monopoly.model.CardType;
+import com.monopoly.model.ChanceCard;
+import com.monopoly.model.CompanyTerrain;
+import com.monopoly.model.Game;
+import com.monopoly.model.ITerrain;
+import com.monopoly.model.MovementResult;
+import com.monopoly.model.Player;
+import com.monopoly.model.PropertyTerrain;
+import com.monopoly.model.TerrainType;
+
+public class GameFacade 
+{
+	public static void startNewGame(List<String> playerNames)
+	{
+		Game.getInstance().clearPlayers();
+		
+		try
+		{
+			// Adding Players to Game Instance
+			for (String tempStr : playerNames)
+			{
+				Game.getInstance().addPlayer(tempStr);
+			}
+			
+			// Setting up First Player
+			Game.getInstance().setupPlayersOrder();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public static void movePiece (Player player, int firstDice, int secondDice)
+	{		
+		int total;
+		int ammount = firstDice + secondDice;
+		
+		total = player.getPiecePosition() + ammount;
+		
+		if (total >= 40) total -= 40;
+		
+		player.setPiecePosition(total);
+	}
+	
+	public static void updateCurrentPlayer ()
+	{
+		Game.getInstance().updateCurrentPlayer();
+	}
+	
+	public static boolean tryBuyTerrain(Player player)
+	{
+		int playerLocation = player.getPiecePosition();
+		ITerrain terrain = Game.getInstance().getBoardTerrains().get(playerLocation);
+		int terrainValue;
+		
+		if (terrain.getType() == TerrainType.Property)
+		{
+			PropertyTerrain property = (PropertyTerrain)terrain;
+			
+			if (property.hasOwner())
+			{
+				return false;
+			}
+			
+			// Gets the acquisition cost of the terrain
+			terrainValue = property.getAcquisitionCost ();
+			
+			// Checking if the player has enough cash to buy the terrain
+			if (player.hasEnoughCash (terrainValue))
+			{
+				// Debits the value from the player and adds it to his list of terrains
+				player.buyTerrain (terrainValue, playerLocation);
+				
+				return true;
+			}
+		}
+		else if (terrain.getType() == TerrainType.Company)
+		{
+			CompanyTerrain company = (CompanyTerrain)terrain;
+			
+			if (company.hasOwner())
+			{
+				return false;
+			}
+			
+			// Gets the acquisition cost of the terrain
+			terrainValue = company.getAcquisitionCost ();
+			
+			// Checking if the player has enough cash to buy the terrain
+			if (player.hasEnoughCash(terrainValue))
+			{
+				// Debits the value from the player and adds it to his list of terrains
+				player.buyTerrain(terrainValue, playerLocation);
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public static Player getCurrentPlayer()
+	{
+		return Game.getInstance().getCurrentPlayer();
+	}
+	
+	// Calculates the consequence of the current player movement
+	// Consequences may be : Draw a chance card, Pay 200, receive 200,
+	// Pay rent to another player, go to prison etc.
+	public static MovementResult getMovementResult(Player player, int diceOne, int diceTwo)
+	{
+		MovementResult result;
+		String         message;
+		ITerrain       terrain;
+		TerrainType    type;
+		int            playerPosition;
+		
+		// Getting current terrain in which the player is located
+		playerPosition = player.getPiecePosition();
+		terrain = Game.getInstance().getBoardTerrains().get(playerPosition);
+		
+		// Checking terrain type
+		type = terrain.getType();
+		message = "";
+		
+		// Checking for jailed Player
+		if (player.isJailed())
+		{
+			// Checks if the dices are equal so that it can set the player free
+			if (diceOne == diceTwo)
+			{
+				player.setPlayerJail (false);
+			}
+			// Checking if the player is jailed  for 3 rounds, if he is, set him free
+			else if (player.getJailedRounds() == 3)
+			{
+				player.setPlayerJail (false);
+			}
+			else
+			{
+				// Increments the round he is jailed
+				player.incrementJailedRound();
+				
+				int missingRounds = 3 - player.getJailedRounds();
+				
+				// Returning result based on jail process if the player is still in jail
+				message = "You could not leave jail. Wait another " +  missingRounds + " rounds or try to double dices";       
+				
+				// Creating result based on jail situation of the player
+				result = new MovementResult(TerrainType.Prison, message);
+				
+				return result;
+			}
+		}
+		
+		// Choosing which action to take based on type of the terrain the player is in
+		if (type == TerrainType.Property)
+		{
+			Player propertyOwner = null;
+			int    rentCost;
+			
+			// If the player is in a property terrain, checks
+			// 1. if the player owns it
+			// 2. if the any other player owns it, so that it must pay rent
+			if (((PropertyTerrain)Game.getInstance().getBoardTerrains().get(playerPosition)).hasOwner()) 
+			{
+				if (player.ownsTerrain(playerPosition))
+				{
+					result = new MovementResult(TerrainType.Property, "Welcome Home. You own this property");
+				}
+				else
+				{
+					for (Player p : Game.getInstance().getPlayers())
+					{
+						if (p.ownsTerrain (playerPosition))
+						{
+							propertyOwner = p;
+							break;
+						}
+					}
+					
+					// Calculating rent of this terrain
+					rentCost = ((PropertyTerrain)terrain).calculateRent();
+					
+					// Executing payment from current player to terrain owner, if the current player has enough cash
+					if (player.hasEnoughCash(rentCost))
+					{
+						player.makePayment (rentCost);
+						propertyOwner.receivePayment (rentCost);
+						
+						// Assembling message
+						message = "Oops. This property is owned by " + propertyOwner.getName() + "\nYou just paid $" + rentCost + " to him";
+						
+						result = new MovementResult (TerrainType.Property, message);
+					}
+					else
+					{
+						message = "Bankrupcy. Player " + player.getName() + "declared bankrupcy.";
+						
+						// Removing player from list of players
+						// TODO : THINK ABOUT THIS METHOD. REMEMBER THAT PROPERTIES MUST BE SENT BACK TO GAME
+						
+						result = new MovementResult(TerrainType.Property, message);
+					}
+				}
+			}
+		}
+		else if (type == TerrainType.Company)
+		{
+			Player companyOwner = null;
+			int    stopbyCost;
+			
+			if (((CompanyTerrain)Game.getInstance().getBoardTerrains().get(playerPosition)).hasOwner()) 
+			{
+				if (player.ownsTerrain(playerPosition))
+				{
+					result = new MovementResult(TerrainType.Property, "Welcome Home. You own this company");
+				}
+				else
+				{
+					for (Player p : Game.getInstance().getPlayers())
+					{
+						if (p.ownsTerrain (playerPosition))
+						{
+							companyOwner = p;
+							break;
+						}
+					}
+					
+					// Calculating stop by cost
+					stopbyCost = ((CompanyTerrain)terrain).calculateStopByCost (diceOne + diceTwo);
+					
+					// Executing payment from current player to terrain owner, if the current player has enough cash
+					if (player.hasEnoughCash(stopbyCost))
+					{
+						player.makePayment (stopbyCost);
+						companyOwner.receivePayment (stopbyCost);
+						
+						// Assembling message
+						message = "Oops. This Company is owned by " + companyOwner.getName() + "\nYou just paid $" + stopbyCost + " to him";
+					}
+					else
+					{
+						message = "Bankrupcy. Player " + player.getName() + "declared bankrupcy.";
+						
+						// Removing player from list of players
+						// TODO : BANKRUPCY METHOD. THINK ABOUT THIS METHOD. REMEMBER THAT PROPERTIES MUST BE SENT BACK TO GAME
+					}
+				}
+			}
+		} 
+		else if (type == TerrainType.Chance)
+		{
+			ChanceCard randomCard = drawRandomCard();
+			
+			// Deciding how the value will be treated by the player
+			// based on the type of the card
+		    executeCardAction(player, randomCard);
+			
+		    // Creating message wrapper
+		    String   cardText   = randomCard.getCardText ();
+		    int      cardValue  = randomCard.CalculateCost (Game.getInstance().getPlayers().size() - 1);
+		    CardType cardType   = randomCard.getCardType();
+			String   cardHeader = "";
+			String   cardFooter = "";
+			
+			if (cardType == CardType.EveryonePays)
+			{
+				cardHeader = "Sorte";
+				cardFooter = "Receba $" + (cardValue / Game.getInstance().getPlayers().size()-1) + "de cada um"; 
+			}
+			else if (cardType == CardType.PlayerPays)
+			{
+				cardHeader = "Revés";
+				cardFooter = "Pague $" + cardValue;
+			}
+			else if (cardType == CardType.PlayerReceives)
+			{
+				cardHeader = "Sorte";
+				cardFooter = "Receba $" + cardValue;
+			}
+			else if (cardType == CardType.GoToPrison)
+			{
+				cardHeader = "Revés";
+			}
+			else if (cardType == CardType.GoToStartPoint)
+			{
+				cardHeader = "Sorte";
+			}
+			else if (cardType == CardType.PrisonExitVoucher)
+			{
+				cardHeader = "Sorte";
+			}
+			
+			// Assembling message
+			message = cardHeader+"\n"+cardText+"\n"+cardFooter;
+			
+			result = new MovementResult (type, message);
+		}
+		else if (type == TerrainType.IncomeTax)
+		{
+			if (player.hasEnoughCash(200))
+			{
+				message = "Player " + player.getName() + " stopped by a Income Tax department. Paid $200.";
+				player.makePayment (200);
+			}
+			else
+			{
+				message = "Player" + player.getName() + " stopped by a Income Tax department,\nbut he doesnt have $200. Bankrupcy";
+				// TODO : BANKRUPCY METHOD
+			}
+		}
+		else if (type == TerrainType.Profit)
+		{
+			message = "You stoped by a 'Profit' house. Congratulations you received $200";
+			player.receivePayment (200);
+		}
+		else if (type == TerrainType.FreeStop)
+		{
+			message = "Free Stop. Enjoy the View";
+		}
+		else if (type == TerrainType.StartPoint)
+		{
+			message = "You Completed a Full Lap. Congratulations you received $200";
+			player.receivePayment (200);
+		}
+		else if (type == TerrainType.PrisonVisitors)
+		{
+			message = "Vising your fellow prisoners";
+		}
+		else if (type == TerrainType.GoToPrison)
+		{
+			message = "Ops! You got Busted ! See you behind the bars.";
+			player.setPiecePosition(10); // Moves player to prison
+			player.setPlayerJail(true);
+		}
+		else if (type == TerrainType.Prison)
+		{
+			// nothing happens
+		}
+		
+		result = new MovementResult (type, message);
+		
+		return result;
+	}
+	
+	// Draws a Random card from the deck
+	// Returns random card and removes it
+	// from the deck. If there's no other card left
+	// it reloads the deck
+	public static ChanceCard drawRandomCard()
+	{
+		Random cardRandomizer;
+		int randomIndex;
+		ChanceCard randomCard;
+		List<ChanceCard> gameCards = Game.getInstance().getChanceCards();
+		
+		cardRandomizer = new Random();
+		
+		// Checks if the list is empty already, if it is, reloads the deck
+		if (gameCards.size() == 0)
+		{
+			try
+			{
+				gameCards = ChanceCardLoader.LoadCards();
+			}
+			catch (Exception ex)
+			{
+				// Do Nothing on catch
+			}
+		}
+		
+		// Randomizing card index to pick
+		randomIndex = cardRandomizer.nextInt (gameCards.size());
+		
+		// Removing picked card from the list so it wont be picked again
+		randomCard = gameCards.remove (randomIndex);
+		
+		return randomCard;
+	}
+	
+	// Executes action to player(s) based on Chance card value and type
+	public static void executeCardAction(Player player, ChanceCard pickedCard)
+	{
+		CardType type;
+		int cardValue;
+		
+		// Reaching card type
+		type = pickedCard.getCardType ();
+		
+		// -1 because the current player does not count
+		cardValue = pickedCard.CalculateCost (Game.getInstance().getPlayers().size() -1 );  
+		
+		// Executing Action based on card type
+		if (type == CardType.EveryonePays)
+		{
+			// Dividing ammount of the card by the number of players
+			cardValue = cardValue / Game.getInstance().getPlayers().size();
+			
+			// Removing this value from each player
+			for (Player p : Game.getInstance().getPlayers())
+			{
+				if (p != player)
+				{
+					p.makePayment(cardValue);
+				}
+			}
+			
+			// Adding full cash to current player
+			// -1 because the current player does not count
+			player.receivePayment ( cardValue * Game.getInstance().getPlayers().size() - 1); 
+		}
+		else if (type == CardType.PlayerPays)
+		{
+			player.makePayment (cardValue);
+		}
+		else if (type == CardType.PlayerReceives)
+		{
+			player.receivePayment (cardValue);
+		}
+		else if (type == CardType.GoToPrison)
+		{
+			// Moving player to prison
+			// 10 is the index of the jail terrain
+			player.setPiecePosition (10);
+			
+			// Jails Player
+			player.setPlayerJail (true); 
+		}
+		else if (type == CardType.PrisonExitVoucher)
+		{
+			// Sets the player free
+			player.setPlayerJail (false);
+		}
+		else if (type == CardType.GoToStartPoint)
+		{
+			// Adds 200 to player cash and moves it to start point
+			player.receivePayment (200);
+			player.setPiecePosition (0);
+		}
+	}
+	
+	// Executes a "Sell" operation 
+	// The owner of the terrain looses ownership and
+	// gets refunded based on the mortgage property
+	// of the terrain card
+	public static boolean sellTerrain(Player seller, int terrainIndex)
+	{
+		boolean terrainSold;
+		ITerrain terrain = Game.getInstance().getBoardTerrains().get(terrainIndex);
+		int mortgageValue = 0 ;
+		
+		// Checks if player is the owner of the terrain being sold
+		if (!seller.ownsTerrain(terrainIndex))
+		{
+			return false;
+		}
+		
+		// Checks if terrain has already a property built inside
+		if (terrain.getType() == TerrainType.Property)
+		{
+			if (seller.getPropertiesBuilt().get(terrainIndex) > 0)
+			{
+				return false;
+			}
+		}
+		
+		// Removes the terrain of the list of terrains of the player
+		terrainSold = seller.sellTerrain(terrainIndex);		
+		
+		// If the Operation went OK, player must receive the Mortgage value of the terrain
+		if (terrainSold)
+		{
+			// Calculating mortgage value based on terrain type and attribute
+			if (terrain.getType() == TerrainType.Company)
+			{
+				mortgageValue = ((CompanyTerrain) terrain).getMortgage();
+			}
+			else if (terrain.getType() == TerrainType.Property)
+			{
+				mortgageValue = ((PropertyTerrain) terrain).getMortgage();
+			}
+			
+			// Refunding Player
+			seller.receivePayment (mortgageValue);
+			
+			// Checking for wrong behavior where no mortgage value was set
+			// 0 is the default one
+			if (mortgageValue == 0)
+			{
+				return false;
+			}
+			
+			// Everything went OK
+			return true;
+		}
+			
+		return false;
+	}
+	
+	public static boolean sellProperty(Player seller, int terrainIndex)
+	{
+		ITerrain terrain = Game.getInstance().getBoardTerrains().get(terrainIndex);
+		
+		// Checks if player is the owner of the terrain being sold
+		if (!seller.ownsTerrain(terrainIndex))
+		{
+			return false;
+		}
+		
+		if (terrain.getType() != TerrainType.Property)
+		{
+			return false;
+		}
+		
+		// Checks if terrain has already a property built inside
+		if (seller.getPropertiesBuilt().get(terrainIndex) <= 0)
+		{
+			return false;
+		}
+		
+		return seller.sellProperty(terrainIndex);		
+	}
+	
+	public static boolean tradeTerrain(Player trader, int terrainFrom, int terrainTo) 
+		throws InvalidTerrainException
+	{
+		ITerrain from = Game.getInstance().getBoardTerrains().get(terrainFrom);
+		ITerrain to = Game.getInstance().getBoardTerrains().get(terrainTo);
+		Player target;
+		
+		if (terrainFrom > 40 || terrainFrom < 0 || terrainTo > 40 || terrainTo < 0)
+		{
+			throw new InvalidTerrainException();
+		}
+		
+		// Validates if player is trying to trade unbuyable terrains
+		if ((from.getType() != TerrainType.Property && from.getType() != TerrainType.Company)
+			|| (to.getType() != TerrainType.Property && to.getType() != TerrainType.Company))
+		{
+			return false;
+		}
+		
+		// Checks if trader owns the terrain he is willing to trade
+		if (!trader.ownsTerrain(terrainFrom))
+		{
+			return false;
+		}
+		
+		// Checks if terrain to has an owner
+		if (to.getType() == TerrainType.Property)
+		{
+			if (((PropertyTerrain)to).getOwnerId() <= 0)
+			{
+				return false;
+			}
+		}
+		else
+		{
+			if (((CompanyTerrain)from).getOwnerId() <= 0)
+			{
+				return false;
+			}
+		}
+		
+		// Gets target player
+		if (to.getType() == TerrainType.Property)
+		{
+			target = Game.getInstance().getPlayers().get(((PropertyTerrain)to).getOwnerId() - 1);
+		}
+		else
+		{
+			target = Game.getInstance().getPlayers().get(((CompanyTerrain)to).getOwnerId() - 1);
+		}
+		
+		// Exchanges terrains
+		for (int i = 0; i < trader.getOwnedTerrainsCount(); i++)
+		{
+			if (trader.getOwnedTerrains().get(i) == terrainFrom)
+			{
+				trader.getOwnedTerrains().remove(i);
+				trader.getOwnedTerrains().add(terrainTo);
+			}
+		}
+		
+		for (int i = 0; i < target.getOwnedTerrainsCount(); i++)
+		{
+			if (target.getOwnedTerrains().get(i) == terrainTo)
+			{
+				target.getOwnedTerrains().remove(i);
+				target.getOwnedTerrains().add(terrainFrom);
+			}
+		}
+		
+		// Moves properties if there are any
+		if (from.getType() == TerrainType.Property)
+		{
+			Integer value = trader.getPropertiesBuilt().get(terrainFrom);
+			trader.getPropertiesBuilt().remove(terrainFrom);
+			target.getPropertiesBuilt().put(terrainFrom, value);
+			((PropertyTerrain)from).setOwnerId(target.getPlayerNumber());
+		}
+		else
+		{
+			((CompanyTerrain)from).setOwnerId(target.getPlayerNumber());
+		}
+		
+		if (to.getType() == TerrainType.Property)
+		{
+			Integer value = target.getPropertiesBuilt().get(terrainTo);
+			target.getPropertiesBuilt().remove(terrainTo);
+			trader.getPropertiesBuilt().put(terrainTo, value);
+			((PropertyTerrain)to).setOwnerId(trader.getPlayerNumber());
+		}
+		else
+		{
+			((CompanyTerrain)to).setOwnerId(trader.getPlayerNumber());
+		}
+		
+		
+		
+		return true;
+	}
+	
+	// Executes a "Payment" of rent operation
+	// Owner of the terrain receives the rent value and the
+	// player that stopped by the terrain, makes the payment
+	// Returns true if the payment went OK, false otherwise
+	public static boolean payRent(Player terrainTenant, int terrainIndex, int diceSum)
+	{
+		Player terrainOwner = null;
+		int rentCost = 0;
+		
+		// Getting References to the owner of the terrain
+		for (Player player : Game.getInstance().getPlayers())
+		{
+			// Checking if the terrain is owned by this player
+			if (player.ownsTerrain(terrainIndex))
+			{
+				terrainOwner = player;
+				break;
+			}	
+		}
+		
+		if (terrainOwner == null)
+		{
+			return false;
+		}
+		
+		// Checking for the right logic for each terrain type
+		if (Game.getInstance().getBoardTerrains().get(terrainIndex).getType() == TerrainType.Company)
+		{
+			// Calculating Rent cost based on Dice Multiplier property of the company terrain
+			CompanyTerrain company = (CompanyTerrain) Game.getInstance().getBoardTerrains().get(terrainIndex);
+			
+			int diceMultipler = company.getDiceMultiplier();
+			
+			rentCost = diceSum * diceMultipler;
+		}
+		else if (Game.getInstance().getBoardTerrains().get(terrainIndex).getType() == TerrainType.Property)
+		{
+			PropertyTerrain property = (PropertyTerrain) Game.getInstance().getBoardTerrains().get(terrainIndex);
+			rentCost = property.calculateRent();
+		}
+		
+		// Adding cash to owner and removing cash from tenant
+		// Checking if the tenant can pay for the rent
+		if (terrainTenant.hasEnoughCash(rentCost))
+		{
+			terrainTenant.makePayment(rentCost);
+			terrainOwner.receivePayment(rentCost);
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public static boolean buildProperty(Player player)
+	{
+		int playerPosition = player.getPiecePosition();
+		ITerrain curTerrain = Game.getInstance().getBoardTerrains().get(playerPosition);
+		PropertyTerrain propertyTerrain = null;
+		List<PropertyTerrain> arrayTerrainsOfSameColor = new ArrayList<PropertyTerrain>();
+		Integer curPropertiesBuilt = 0;
+		List<ITerrain> boardTerrains = Game.getInstance().getBoardTerrains();
+		
+		if (curTerrain.getType() != TerrainType.Property)
+		{
+			return false;
+		}
+		
+		propertyTerrain = (PropertyTerrain)curTerrain;
+		
+		if (propertyTerrain.getOwnerId() != player.getPlayerNumber())
+		{
+			return false;
+		}
+		
+		// Gets all terrains of the same color as the one in which the player is currently
+		for (ITerrain tempTerrain : Game.getInstance().getBoardTerrains())
+		{
+			if (tempTerrain.getType() == TerrainType.Property 
+				&& ((PropertyTerrain)tempTerrain).getColor() == propertyTerrain.getColor()
+				&& ((PropertyTerrain)tempTerrain).getOwnerId() == player.getPlayerNumber())
+			{
+				arrayTerrainsOfSameColor.add((PropertyTerrain)tempTerrain);
+			}
+		}
+		
+		// Validate terrain values for whether a player can build in it or not
+		curPropertiesBuilt = player.getPropertiesBuilt().get(boardTerrains.indexOf(propertyTerrain));
+		
+		// If it posseses one ore more properties in the terrain, validates whether he can build
+		// another property by verifying whether all other terrains of the same color owned by the
+		// player do have. More than five properties in a terrain is not allowed
+		if (curPropertiesBuilt >= 5)
+		{
+			return false;
+		}
+		else if (curPropertiesBuilt != 0)
+		{
+			for (PropertyTerrain tempTerrain : arrayTerrainsOfSameColor)
+			{
+				// If does not have the same amount of properties in the terrains of the same color
+				// then it cannot build one more property there.
+				if (player.getPropertiesBuilt().get(boardTerrains.indexOf(tempTerrain)) < curPropertiesBuilt)
+				{
+					return false;
+				}
+			}
+		}
+		
+		// Check if player has enough money for the purchase
+		if (curPropertiesBuilt >= 0 && curPropertiesBuilt < 4)
+		{
+			if (player.getCash() < propertyTerrain.getHouseCost())
+			{
+				return false;
+			}
+		}
+		else if (curPropertiesBuilt == 4)
+		{
+			if (player.getCash() < propertyTerrain.getHotelCost()) 
+			{
+				return false;
+			}
+		}
+		
+		// Passed all false validations, then it can be built
+		// Remove information from hashMap to add it with different value
+		player.getPropertiesBuilt().remove(boardTerrains.indexOf(propertyTerrain));
+		
+		// Add new amount of properties in the terrain owned by the current player
+		player.getPropertiesBuilt().put(boardTerrains.indexOf(propertyTerrain), curPropertiesBuilt + 1);
+		
+		// Remove cash from the player according to the specified price of the property
+		if (curPropertiesBuilt >= 0 && curPropertiesBuilt < 4)
+		{
+			player.makePayment(propertyTerrain.getHotelCost());
+		}
+		else if (curPropertiesBuilt == 4)
+		{
+			player.makePayment(propertyTerrain.getHotelCost());
+		}
+		
+		return true;
+	}
+	
+	public static Player getTerrainOwner(int terrainValue)
+	{
+		ITerrain terrain = Game.getInstance().getBoardTerrains().get(terrainValue);
+		
+		if (terrain.getType() == TerrainType.Property)
+		{
+			if (!((PropertyTerrain)terrain).hasOwner())
+			{
+				return null;
+			}
+			
+			return Game.getInstance().getPlayers().get(((PropertyTerrain)terrain).getOwnerId() - 1);
+		}
+		else if (terrain.getType() == TerrainType.Company)
+		{
+			if (!((CompanyTerrain)terrain).hasOwner())
+			{
+				return null;
+			}
+			
+			return Game.getInstance().getPlayers().get(((CompanyTerrain)terrain).getOwnerId() - 1);
+		}
+		
+		return null;
+	}
+}
