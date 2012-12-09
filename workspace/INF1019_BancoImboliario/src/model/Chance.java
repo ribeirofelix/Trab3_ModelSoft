@@ -13,16 +13,6 @@ public class Chance implements ICard {
 	}
 	
 	
-	@Override
-	public void action() {
-		if (operator.equalsIgnoreCase("plus")){
-			playerOnwer.putMoney(value);
-		}
-		else if (operator.equalsIgnoreCase("minus")){
-			playerOnwer.removeMoney(this.value);
-		}
-	}
-
 	public String getImagePath() {
 		return imagePath;
 	}
@@ -53,6 +43,18 @@ public class Chance implements ICard {
 
 	public void setPlayerOnwer(Player playerOnwer) {
 		this.playerOnwer = playerOnwer;
+	}
+
+
+	@Override
+	public void action(Player playerHere) {
+		this.playerOnwer = playerHere;
+		if (operator.equalsIgnoreCase("plus")){
+			playerOnwer.putMoney(value);
+		}
+		else if (operator.equalsIgnoreCase("minus")){
+			playerOnwer.removeMoney(this.value);
+		}
 	}
 
 }

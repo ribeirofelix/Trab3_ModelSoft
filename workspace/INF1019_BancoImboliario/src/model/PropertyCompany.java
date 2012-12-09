@@ -12,14 +12,16 @@ public class PropertyCompany extends Property implements  ICard {
 		
 	}
 	
-	@Override
-	public void action() {
-		// TODO Auto-generated method stub
 
-	}
 	
 	public int multiplyDicePoints(int dicePoint) {
 		return dicePoint * this.multiplier;
+	}
+
+	@Override
+	public void action(Player playerHere) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

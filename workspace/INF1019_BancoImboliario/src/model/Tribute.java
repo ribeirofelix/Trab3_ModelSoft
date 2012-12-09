@@ -10,14 +10,14 @@ public class Tribute implements ICard {
 	}
 	
 	@Override
-	public void action() {
-		// TODO Auto-generated method stub
-
+	public String getImagePath() {
+		return imagePath;
 	}
 
 	@Override
-	public String getImagePath() {
-		return imagePath;
+	public void action(Player playerHere) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -18,6 +18,8 @@ public class Player {
 	private int position;
 	private ArrayList<Property> myProperties  ;
 	private HashMap<Money , MoneyPack> myMoney = new HashMap<Money,MoneyPack>();
+	private final int sizeOfWalk = 61 ;
+	
 	
 	public Pivot getPivot(){
 		return this.pivot;
@@ -78,6 +80,10 @@ public class Player {
 	
 	public int getPosition(){
 		return this.position;
+	}
+	public void setPosition(int position){
+		this.walk(this.position - position);
+		this.position = position;
 	}
 	
 	public boolean buyProperty(Property property){
@@ -250,4 +256,32 @@ public class Player {
 		this.myProperties.add(property);
 	}
 
+	public void walk(int numOfHouses){
+		int xCoordinate, yCoordinate; 
+		for (int i = 0; i < numOfHouses ; i++) {
+			
+			xCoordinate = this.getPlayerPoint().x;
+			yCoordinate = this.getPlayerPoint().y;
+			
+			if (this.getPosition() >= 0 && this.getPosition() < 10){		
+				
+				this.setPlayerPoint(new Point(xCoordinate, yCoordinate + sizeOfWalk));				
+			}
+			else if (this.getPosition() >= 10 && this.getPosition() < 20){
+				
+				this.setPlayerPoint(new Point(xCoordinate - sizeOfWalk, yCoordinate));
+			}
+			else if (this.getPosition() >= 20 && this.getPosition() < 30){
+				
+				this.setPlayerPoint(new Point(xCoordinate, yCoordinate - sizeOfWalk));
+			}
+			else if (this.getPosition() >= 30 && this.getPosition() <= 39){
+				
+				this.setPlayerPoint(new Point(xCoordinate + sizeOfWalk, yCoordinate));
+			}
+			
+			this.walkOnePosition();
+		}
+	}
+	
 }

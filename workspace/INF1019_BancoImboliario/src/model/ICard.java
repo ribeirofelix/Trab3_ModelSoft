@@ -2,6 +2,6 @@ package model;
 
 public interface ICard {
 	
-	void action();
+	void action(Player playerHere);
 	String getImagePath();
 }

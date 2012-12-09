@@ -9,14 +9,15 @@ public class Profit implements ICard {
 	public Profit(int value) {
 		this.value = value;
 	}
-	@Override
-	public void action() {
-		// TODO Auto-generated method stub
-
-	}
+	
 	@Override
 	public String getImagePath() {
 		return imagePath;
+	}
+	@Override
+	public void action(Player playerHere) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

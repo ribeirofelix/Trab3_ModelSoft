@@ -3,16 +3,18 @@ package model;
 public class GoToPrision implements ICard {
 
 	private String imagePath = "images//board cards//gotoprision.png";
-	
-	@Override
-	public void action() {
-		// TODO Auto-generated method stub
+	private final int prisionPosition = 10 ;
 
-	}
 
 	@Override
 	public String getImagePath() {
 		return imagePath;
+	}
+
+	@Override
+	public void action(Player playerHere) {
+		playerHere.setPosition(prisionPosition);
+		
 	}
 
 }

@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
-import javax.swing.plaf.multi.MultiButtonUI;
 
 import model.Chance;
 import model.ICard;
@@ -102,33 +101,8 @@ public class GameController implements ActionListener {
 		
 
 		Player currentPlayer = Main.getCurrentPlayer();		
-		
-		int xCoordinate, yCoordinate; 
-		for (int i = 0; i < numOfHouses ; i++) {
-			
-			xCoordinate = currentPlayer.getPlayerPoint().x;
-			yCoordinate = currentPlayer.getPlayerPoint().y;
-			
-			if (currentPlayer.getPosition() >= 0 && currentPlayer.getPosition() < 10){		
+		currentPlayer.walk(numOfHouses);
 				
-				currentPlayer.setPlayerPoint(new Point(xCoordinate, yCoordinate + sizeOfWalk));				
-			}
-			else if (currentPlayer.getPosition() >= 10 && currentPlayer.getPosition() < 20){
-				
-				currentPlayer.setPlayerPoint(new Point(xCoordinate - sizeOfWalk, yCoordinate));
-			}
-			else if (currentPlayer.getPosition() >= 20 && currentPlayer.getPosition() < 30){
-				
-				currentPlayer.setPlayerPoint(new Point(xCoordinate, yCoordinate - sizeOfWalk));
-			}
-			else if (currentPlayer.getPosition() >= 30 && currentPlayer.getPosition() <= 39){
-				
-				currentPlayer.setPlayerPoint(new Point(xCoordinate + sizeOfWalk, yCoordinate));
-			}
-			
-			currentPlayer.walkOnePosition();
-		}
-		
 		
 		/* If player already owns the place */
 		if (currentPlayer.hasProperty(Main.getBoardGame().getPropertyAt(currentPlayer.getPosition()))){
@@ -148,10 +122,10 @@ public class GameController implements ActionListener {
 				Main.enableBuyPropertyButton(true);
 			}
 			else{	
+				//Main.getBoardGame().getHouseOnThisPosition(currentPlayer.getPosition()).getCard().action(currentPlayer);
 				if( Main.getBoardGame().isChance(currentPlayer.getPosition()) ){
 					Chance cardChance = Main.getBoardGame().getOneChance();
-					cardChance.setPlayerOnwer(currentPlayer);
-					cardChance.action();
+					cardChance.action(currentPlayer);
 					
 				}
 				else{

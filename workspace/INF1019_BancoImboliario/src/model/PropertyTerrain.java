@@ -104,13 +104,13 @@ public class PropertyTerrain extends Property implements  ICard {
 		return false;
 	}
 
-	@Override
-	public void action() {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public String getGroup() {
 		return group;
+	}
+
+	@Override
+	public void action(Player playerHere) {
+		// TODO Auto-generated method stub
+		
 	}
 }
