@@ -3,16 +3,13 @@ package control;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
+import javax.swing.plaf.multi.MultiButtonUI;
 
 import model.Chance;
 import model.ICard;
 import model.Player;
 import model.Property;
-
 import model.PropertyCompany;
 import model.PropertyTerrain;
 
@@ -79,19 +76,30 @@ public class GameController implements ActionListener {
 		Main.updatePlayerStatus(null);
 		Main.removeMeFromNegociation();
 		
-		Dice dice = new Dice();
+		int manuallyRoll = Main.getManuallyRoll(); 
+		int numOfHouses ;
 		int sizeOfWalk = 61;
 		
-		/* Roll the dice twice */
-		int rollOne = dice.rollTheDice();
-		int rollTwo = dice.rollTheDice();
-		int numOfHouses = rollOne + rollTwo;
+		if(manuallyRoll == 0){
+			Dice dice = new Dice();
+			
+			
+			/* Roll the dice twice */
+			int rollOne = dice.rollTheDice();
+			int rollTwo = dice.rollTheDice();
+			numOfHouses = rollOne + rollTwo;
+			
+			/* If the rolls was the same. Play Again */
+			if(rollOne == rollTwo)
+				Main.repeatPlayer();
+			
+			Main.showRollDiceAndPlayerStatus(rollOne, rollTwo);
+		}
+		else{
+			numOfHouses = manuallyRoll;
+			Main.showRollDiceAndPlayerStatus(manuallyRoll/2, manuallyRoll/2);
+		}
 		
-		/* If the rolls was the same. Play Again */
-		if(rollOne == rollTwo)
-			Main.repeatPlayer();
-		
-		Main.showRollDiceAndPlayerStatus(rollOne, rollTwo);
 
 		Player currentPlayer = Main.getCurrentPlayer();		
 		

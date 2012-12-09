@@ -1,6 +1,5 @@
 package model;
 
-import java.io.ObjectInputStream.GetField;
 
 public class Profit implements ICard {
 

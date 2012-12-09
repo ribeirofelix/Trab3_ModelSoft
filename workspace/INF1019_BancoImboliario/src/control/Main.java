@@ -6,11 +6,8 @@ import java.awt.Dimension;
 
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.font.NumericShaper;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumSet;
-
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,7 +32,8 @@ public class Main {
 								, nameCmbProperties = "cmbProperties"
 								, nameCmbPlayerToNegociate = "cmbPlayerToNegociate"
 								, nameCmbNegType = "cmbNegType"
-								, valueTxt = "valueTxt";
+								, valueTxt = "valueTxt"
+								, nameTxtManuallyRoll = "nameTxtManuallyRoll";
 	private static boolean playAgain = false ;
 	private static int rounds = 0 ;
 	
@@ -141,6 +139,15 @@ public class Main {
 		btnRollDice.setActionCommand(ActionCommand.RollDices.name());
 		btnRollDice.setBounds(pnlMenuPlayer.getHeight() + 80 , pnlMenuPlayer.getWidth()/8 , 200, 50);
 		pnlMenuPlayer.add(btnRollDice);
+		
+		
+		/* Manually roll */
+		JTextField txtManuallyRoll = new JTextField();
+		txtManuallyRoll.setBounds(btnRollDice.getX() + btnRollDice.getWidth() + 10, btnRollDice.getY(), 100, 50);
+		txtManuallyRoll.setName(nameTxtManuallyRoll);
+		pnlMenuPlayer.add(txtManuallyRoll);
+		
+		
 		
 		/*Dice roll value*/
 		JLabel lblDiceRollValue = new JLabel();
@@ -425,6 +432,21 @@ public class Main {
 		return null;
 	}
 
+	/* This method return a number inputed on a manually roll.
+	 * If has no inputed value, it will returns 0  */
+	public static int getManuallyRoll(){
+		JTextField input = (JTextField) searchComponentInBtnJPanelByName(nameTxtManuallyRoll);
+		if(!input.getText().isEmpty()){
+			String rollValue = input.getText();
+			if(rollValue.matches("((-|\\+)?[0-9])+")){
+				return Integer.parseInt(rollValue);
+			}
+			
+		}
+	
+		return 0;
+		
+	}
 
 	public static void showSellerProperties(){
 		

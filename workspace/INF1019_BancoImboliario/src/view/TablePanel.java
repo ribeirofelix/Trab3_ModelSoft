@@ -4,10 +4,10 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
+
 import java.awt.Panel;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
