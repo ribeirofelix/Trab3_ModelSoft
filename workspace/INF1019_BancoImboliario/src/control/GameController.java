@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
 import model.ActionOnHouse;
+import model.Board;
 import model.Chance;
 import model.ICard;
 import model.Player;
@@ -79,14 +80,17 @@ public class GameController implements ActionListener {
 		int manuallyRoll = Main.getManuallyRoll(); 
 		int numOfHouses ;
 		
+		
+		Player currentPlayer = Main.getCurrentPlayer();	
+		int rollTwo, rollOne;
+		
 		/*Decide if the roll is manually or not. */
 		if(manuallyRoll == 0){
 			Dice dice = new Dice();
-			
-			
+						
 			/* Roll the dice twice */
-			int rollOne = dice.rollTheDice();
-			int rollTwo = dice.rollTheDice();
+			rollOne = dice.rollTheDice();
+			rollTwo = dice.rollTheDice();
 			numOfHouses = rollOne + rollTwo;
 			
 			/* If the rolls was the same. Play Again */
@@ -96,12 +100,44 @@ public class GameController implements ActionListener {
 			Main.showRollDiceAndPlayerStatus(rollOne, rollTwo);
 		}
 		else{
+			
 			numOfHouses = manuallyRoll;
 			Main.showRollDiceAndPlayerStatus(manuallyRoll/2, manuallyRoll/2);
+			rollOne = rollTwo = manuallyRoll/2;
 		}
 		
-		/* Walk with the player */
-		Player currentPlayer = Main.getCurrentPlayer();		
+	
+		
+		/* See if player is on prision*/
+		if (currentPlayer.getIsPlayerOnPrision()){
+			
+			//currentPlayer.setWayOutPrisionCard(Main.getBoardGame().getWayOut());
+			
+			/* If rolls the same number */
+			if (rollOne == rollTwo){
+				currentPlayer.freePlayer();
+			}
+			
+			/* Player has Free pass */
+			else if (currentPlayer.HasWayOutPass()){
+				Main.getBoardGame().addOnChances(currentPlayer.getWayOutPrisionCard());
+				currentPlayer.freePlayer();
+			}
+			
+			/* Player has already done the time */
+			else if (Main.getRounds() - currentPlayer.getTurnThatPlayerWasArrested() > 3){
+				currentPlayer.removeMoney(50);
+				currentPlayer.freePlayer();
+			}
+				
+			else{ 
+				Main.updateFrame();
+				Main.ShowCurrentCard();
+				return;
+			}
+		}
+		
+		/* Walk with the player */	
 		currentPlayer.walk(numOfHouses);
 			
 		/* Do action in accordance with the house */

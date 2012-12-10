@@ -37,7 +37,9 @@ public class Main {
 	private static boolean playAgain = false ;
 	private static int rounds = 0 ;
 	
-	
+	public static int getRounds(){
+		return rounds;
+	}
 	
 	public static FirstFrame getGameFrame (){
 		return gameFrame;

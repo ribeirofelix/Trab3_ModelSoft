@@ -18,17 +18,53 @@ public class Player {
 	private int position;
 	private ArrayList<Property> myProperties  ;
 	private HashMap<Money , MoneyPack> myMoney = new HashMap<Money,MoneyPack>();
-	private final int sizeOfWalk = 61 ;
+	private final int sizeOfWalk = 61;
+	private boolean isPlayerOnPrision;
+	private int turnThatPlayerWasArrested;
+	private Chance wayOutPrisionCard;
 	
+	public Chance getWayOutPrisionCard() {
+		Chance chance = this.wayOutPrisionCard;
+		this.wayOutPrisionCard = null;
+		
+		return chance;
+	}
+
+	public void setWayOutPrisionCard(Chance wayOutPrisionCard) {
+		this.wayOutPrisionCard = wayOutPrisionCard;
+	}
 	
 	public Pivot getPivot(){
 		return this.pivot;
+	}
+	
+	public boolean getIsPlayerOnPrision(){
+		return this.isPlayerOnPrision;
+	}
+	
+	public void putPlayerOnPrision(){
+		this.isPlayerOnPrision = true;
+	}
+	
+	public void freePlayer(){
+		this.isPlayerOnPrision = false;
+	}
+	
+	public int getTurnThatPlayerWasArrested() {
+		return turnThatPlayerWasArrested;
+	}
+
+	public void setTurnThatPlayerWasArrested(int turnThatPlayerWasArrested) {
+		this.turnThatPlayerWasArrested = turnThatPlayerWasArrested;
 	}
 	
 	public Player (Pivot pivot , Point initialPositon ){
 		this.pivot = pivot;
 		this.playerPoint = initialPositon;
 		this.position = 0;
+		this.isPlayerOnPrision = false;
+		this.setTurnThatPlayerWasArrested(-1);
+		this.setWayOutPrisionCard(null);
 		
 		/* Creating money */
 		myMoney.put(Money.FiveHundred ,new PackOfFiveHundred());
@@ -81,6 +117,7 @@ public class Player {
 	public int getPosition(){
 		return this.position;
 	}
+	
 	public void setPosition(int position){
 		this.walk(this.position - position);
 		this.position = position;
@@ -283,5 +320,20 @@ public class Player {
 			this.walkOnePosition();
 		}
 	}
+
+	
+	public boolean HasWayOutPass() {
+		
+		if (this.wayOutPrisionCard != null){
+
+			return true;
+		}
+		
+		return false;
+	}
+
+
+
+ 
 	
 }

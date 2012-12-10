@@ -1,9 +1,11 @@
 package model;
 
+import control.Main;
+
 public class GoToPrision implements ICard {
 
 	private String imagePath = "images//board cards//gotoprision.png";
-	private final int prisionPosition = 10 ;
+	public static final int prisionPosition = 10 ;
 
 
 	@Override
@@ -13,6 +15,8 @@ public class GoToPrision implements ICard {
 
 	@Override
 	public ActionOnHouse action(Player playerHere) {
+		playerHere.putPlayerOnPrision();
+		playerHere.setTurnThatPlayerWasArrested(Main.getRounds());
 		playerHere.setPosition(prisionPosition);
 		return  ActionOnHouse.NothingToDo;
 	}
