@@ -8,6 +8,31 @@ public class Board {
 	private ArrayList<House> houses = new ArrayList<>(40);
 	private List<Chance> chances  = new ArrayList<Chance>();
 	
+	public void addOnChances(Chance chance){
+		chances.add(chance);
+	}
+	
+	// mock
+	public Chance getGoToPrision (){
+		for(Chance cha : this.chances){
+			if (cha.getOperator().equalsIgnoreCase("wasArrested"))
+				return cha;
+		}
+		
+		return null;
+	}
+	
+	public Chance getWayOut(){
+		for(Chance cha : this.chances){
+			if (cha.getOperator().equalsIgnoreCase("wayOut"))
+				return cha;
+		}
+		
+		return null;
+	}
+	
+	// end mock
+	
 	public Board() {
 		
 		FactoryICard factCards = new FactoryICard();
@@ -50,9 +75,15 @@ public class Board {
 	
 	public Chance getOneChance(){
 		Chance removedChance = chances.remove(0);
+		
+		if (removedChance.getOperator().equalsIgnoreCase("wayOut")){
+			return removedChance;
+		}
+		
 		chances.add(removedChance);
 		return removedChance;
 	}
+	
 	public boolean isChance(int position){
 		ICard cardAtHouse = houses.get(position).getCard() ;
 		if (cardAtHouse  instanceof Chance){
