@@ -12,9 +12,9 @@ public class GoToPrision implements ICard {
 	}
 
 	@Override
-	public void action(Player playerHere) {
+	public ActionOnHouse action(Player playerHere) {
 		playerHere.setPosition(prisionPosition);
-		
+		return  ActionOnHouse.NothingToDo;
 	}
 
 }

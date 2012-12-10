@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
+import model.ActionOnHouse;
 import model.Chance;
 import model.ICard;
 import model.Player;
@@ -77,8 +78,8 @@ public class GameController implements ActionListener {
 		
 		int manuallyRoll = Main.getManuallyRoll(); 
 		int numOfHouses ;
-		int sizeOfWalk = 61;
 		
+		/*Decide if the roll is manually or not. */
 		if(manuallyRoll == 0){
 			Dice dice = new Dice();
 			
@@ -99,7 +100,7 @@ public class GameController implements ActionListener {
 			Main.showRollDiceAndPlayerStatus(manuallyRoll/2, manuallyRoll/2);
 		}
 		
-
+		/* Walk with the player */
 		Player currentPlayer = Main.getCurrentPlayer();		
 		currentPlayer.walk(numOfHouses);
 				
@@ -159,6 +160,29 @@ public class GameController implements ActionListener {
 		
 	}
 	
-	
+	private void doActionOnHouse(ActionOnHouse action, Player currentPlayer, int diceRoll ){
+		switch (action) {
+		case CanBuildOnIt:
+			Main.enableBuildHouseButton(true);
+			Main.enableBuyPropertyButton(false);
+			break;
+
+		case CanBuyIt:
+			Main.enableBuyPropertyButton(true);
+			Main.enableBuildHouseButton(false);
+			break;
+		case PayforIt:
+			Property steppedProperty = Main.getBoardGame().getPropertyAt(currentPlayer.getPosition());
+			if(steppedProperty instanceof PropertyTerrain)
+				((PropertyTerrain)steppedProperty).chargeMoney(currentPlayer);
+			else
+				((PropertyCompany)steppedProperty).chargeMoney(currentPlayer, diceRoll);
+			break;
+		case NothingToDo:
+			break;
+		default:
+			break;
+		}
+	}
 	
 }

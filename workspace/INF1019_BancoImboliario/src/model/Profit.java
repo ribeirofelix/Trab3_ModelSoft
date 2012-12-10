@@ -15,8 +15,9 @@ public class Profit implements ICard {
 		return imagePath;
 	}
 	@Override
-	public void action(Player playerHere) {
-		// TODO Auto-generated method stub
+	public ActionOnHouse action(Player playerHere) {
+		playerHere.putMoney(value);
+		return ActionOnHouse.NothingToDo;
 		
 	}
 	

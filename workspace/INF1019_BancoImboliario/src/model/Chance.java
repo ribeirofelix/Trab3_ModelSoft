@@ -47,7 +47,7 @@ public class Chance implements ICard {
 
 
 	@Override
-	public void action(Player playerHere) {
+	public ActionOnHouse action(Player playerHere) {
 		this.playerOnwer = playerHere;
 		if (operator.equalsIgnoreCase("plus")){
 			playerOnwer.putMoney(value);
@@ -55,6 +55,7 @@ public class Chance implements ICard {
 		else if (operator.equalsIgnoreCase("minus")){
 			playerOnwer.removeMoney(this.value);
 		}
+		return ActionOnHouse.NothingToDo;
 	}
 
 }

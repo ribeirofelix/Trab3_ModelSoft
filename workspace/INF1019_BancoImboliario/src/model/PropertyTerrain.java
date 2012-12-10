@@ -109,8 +109,20 @@ public class PropertyTerrain extends Property implements  ICard {
 	}
 
 	@Override
-	public void action(Player playerHere) {
-		// TODO Auto-generated method stub
+	public ActionOnHouse action(Player playerHere) {
+		if(playerHere.hasProperty(this)){
+			if(!hasHotel){
+				return ActionOnHouse.CanBuildOnIt;
+			}
+			return ActionOnHouse.NothingToDo;
+		}
+		return ActionOnHouse.PayforIt;
+		
+	}
+	
+	public void chargeMoney(Player playerToCharge){
+		
+		playerToCharge.removeMoney(this.getRentValue());
 		
 	}
 }

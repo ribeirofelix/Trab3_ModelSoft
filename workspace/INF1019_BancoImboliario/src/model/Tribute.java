@@ -15,8 +15,9 @@ public class Tribute implements ICard {
 	}
 
 	@Override
-	public void action(Player playerHere) {
-		// TODO Auto-generated method stub
+	public ActionOnHouse action(Player playerHere) {
+		playerHere.removeMoney(value);
+		return ActionOnHouse.NothingToDo;
 		
 	}
 

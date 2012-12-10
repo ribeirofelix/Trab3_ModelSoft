@@ -19,9 +19,14 @@ public class PropertyCompany extends Property implements  ICard {
 	}
 
 	@Override
-	public void action(Player playerHere) {
-		// TODO Auto-generated method stub
-		
+	public ActionOnHouse action(Player playerHere) {
+		if(playerHere.hasProperty(this)){
+			return ActionOnHouse.NothingToDo;
+		}
+		return ActionOnHouse.PayforIt;
 	}
 
+	public void chargeMoney(Player playerToCharge, int diceRoll){
+		playerToCharge.removeMoney(multiplyDicePoints(diceRoll));
+	}
 }
