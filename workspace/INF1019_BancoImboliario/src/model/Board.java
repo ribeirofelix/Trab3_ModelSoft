@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.net.ssl.HostnameVerifier;
-
 public class Board {
 	private ArrayList<House> houses = new ArrayList<>(40);
 	private List<Chance> chances  = new ArrayList<Chance>();

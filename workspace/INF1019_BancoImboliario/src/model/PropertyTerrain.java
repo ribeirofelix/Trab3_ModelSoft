@@ -106,14 +106,18 @@ public class PropertyTerrain extends Property implements  ICard {
 		return group;
 	}
 
+	
+	
 	@Override
 	public ActionOnHouse action(Player playerHere) {
+				
 		if(this.playerOwner == null)
 			return ActionOnHouse.CanBuyIt;
 		
+		/* Verify if this property belongs to player here*/
 		if(playerHere.hasProperty(this)){
 			if(!hasHotel){
-				return ActionOnHouse.CanBuildOnIt;
+				return ActionOnHouse.AlreadyOwnsIt;
 			}
 			return ActionOnHouse.NothingToDo;
 		}
@@ -121,9 +125,12 @@ public class PropertyTerrain extends Property implements  ICard {
 		
 	}
 	
-	public void chargeMoney(Player playerToCharge){
+	public boolean chargeMoney(Player playerToCharge){
 		
-		playerToCharge.removeMoney(this.getRentValue());
-		
+		if(playerToCharge.removeMoney(this.getRentValue()) ){
+			this.playerOwner.putMoney(this.getRentValue());
+			return true;
+		}
+		return false ;
 	}
 }

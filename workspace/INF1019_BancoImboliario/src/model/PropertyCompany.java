@@ -31,7 +31,13 @@ public class PropertyCompany extends Property implements  ICard {
 		return ActionOnHouse.PayforIt;
 	}
 
-	public void chargeMoney(Player playerToCharge, int diceRoll){
-		playerToCharge.removeMoney(multiplyDicePoints(diceRoll));
+	public boolean chargeMoney(Player playerToCharge, int diceRoll){
+		
+		if(playerToCharge.removeMoney(multiplyDicePoints(diceRoll))){
+		
+			this.playerOwner.putMoney(multiplyDicePoints(diceRoll));
+			return true;
+		}
+		return false ;
 	}
 }

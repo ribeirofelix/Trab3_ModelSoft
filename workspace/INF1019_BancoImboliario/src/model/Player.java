@@ -163,7 +163,7 @@ public class Player {
 				else if(howMuch < 500)				
 					this.exchangeMoney(Money.FiveHundred);
 				
-				removeMoney(howMuch);
+				return removeMoney(howMuch);
 				
 			}
 			else{

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -239,7 +240,9 @@ public class Main {
 	public static Player getCurrentPlayer(){
 		if(currentPlayer < 0)
 			return playersArray.get(0);
-		
+		if(currentPlayer  > playersArray.size() - 1){
+			return null ;
+		}
 		return playersArray.get(currentPlayer);
 	}
 	
@@ -283,7 +286,13 @@ public class Main {
 	public static void ShowCurrentCard(){
 		CardImagePanel pnlCardImage = (CardImagePanel)searchComponentInBtnJPanelByName(namePnlCardImage);
 		
-		ICard currntCard = boardGame.getHouseOnThisPosition(getCurrentPlayer().getPosition()).getCard() ;
+		Player currPlayer = getCurrentPlayer();
+		if(currPlayer == null){
+			pnlCardImage.setPathImageCard(null);
+			pnlCardImage.repaint();
+			return ;
+		}
+		ICard currntCard = boardGame.getHouseOnThisPosition(currPlayer.getPosition()).getCard() ;
 		
 		if(currntCard == null){
 			pnlCardImage.setPathImageCard(null);
@@ -466,6 +475,20 @@ public class Main {
 			cmbProperties.addItem(nameProp);
 		}
 		
+		
+	}
+	
+	public static void bankruptcyPlayer(Player player){
+		JOptionPane.showMessageDialog(Main.getGameFrame(), "Jogador não tem dinheiro suficiente. Você faliu.", "Opss", JOptionPane.WARNING_MESSAGE);
+		playersArray.remove(player);
+		numberOfPlayers--;
+		if(playersArray.size() == 1){
+			JOptionPane.showMessageDialog(Main.getGameFrame(), "Você ganhou" +playersArray.get(0).getPivot().name() +"!Todos faliram e você é o mais rico!", "Parabéns", JOptionPane.WARNING_MESSAGE);
+			
+			
+			setPlayerStatus((JLabel)searchComponentInBtnJPanelByName(nameLblGamerStatus) , playersArray.get(0));
+			
+		}
 		
 	}
 

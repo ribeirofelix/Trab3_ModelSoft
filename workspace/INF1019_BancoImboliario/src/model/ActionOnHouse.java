@@ -3,7 +3,7 @@ package model;
 public enum ActionOnHouse {
 
 	PayforIt,
-	CanBuildOnIt,
+	AlreadyOwnsIt,
 	CanBuyIt,
 	NothingToDo,
 	GetChance,

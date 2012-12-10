@@ -19,6 +19,8 @@ public class GameController implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		switch (ActionCommand.valueOf(e.getActionCommand())) {
 		case RollDices:
+			if(Main.getNumberOfPlayers()==1)
+				return ;
 			rollDiceAction();
 			break;
 		case BuyProperty:
@@ -51,7 +53,7 @@ public class GameController implements ActionListener {
 			if (!((PropertyTerrain) playerCard).buildHouse()){
 				JOptionPane.showMessageDialog(Main.getGameFrame(), "Jogador não tem dinheiro suficiente", "Opss", JOptionPane.WARNING_MESSAGE);
 			}
-			
+			Main.updatePlayerStatus();
 			Main.enableBuildHouseButton(false);
 		}
 	}
@@ -59,12 +61,12 @@ public class GameController implements ActionListener {
 	private void buyProperty(){
 		
 		Player currentPleyer = Main.getCurrentPlayer();
-		System.out.println(currentPleyer.getAmountOfMoney());
 		Property propertyToBuy = Main.getBoardGame().getPropertyAt(currentPleyer.getPosition());
 		
 		currentPleyer.buyProperty(propertyToBuy);
 			
 		Main.updatePlayerStatus();
+		
 		Main.enableBuyPropertyButton(false);
 	}
 	
@@ -108,55 +110,7 @@ public class GameController implements ActionListener {
 		ActionOnHouse action = Main.getBoardGame().getActionOnHouse(currentPlayer);
 		doActionOnHouse(action, currentPlayer, numOfHouses);
 		
-		/* If player already owns the place 
-		if (currentPlayer.hasProperty(Main.getBoardGame().getPropertyAt(currentPlayer.getPosition()))){
-			
-			 if the player can build a house 
-			if(Main.getBoardGame().canPlayerBuildHouseOnIt(currentPlayer.getPosition(), currentPlayer)){
-				
-				Main.enableBuildHouseButton(true);
-			}
-			else{
-				Main.enableBuildHouseButton(false);
-			}
-		}
-		else{
-	
-			if( Main.getBoardGame().isPurchasable( currentPlayer.getPosition() ) ){
-				Main.enableBuyPropertyButton(true);
-			}
-			else{	
-				//Main.getBoardGame().getHouseOnThisPosition(currentPlayer.getPosition()).getCard().action(currentPlayer);
-				if( Main.getBoardGame().isChance(currentPlayer.getPosition()) ){
-					Chance cardChance = Main.getBoardGame().getOneChance();
-					cardChance.action(currentPlayer);
-					
-				}
-				else{
-					Property steppedProperty = Main.getBoardGame().getPropertyAt(currentPlayer.getPosition());
-					
-					if(steppedProperty != null && steppedProperty.getPlayerOwner() != currentPlayer ){
-					
-						int howManyToPay = 0 ;
-						if(steppedProperty instanceof PropertyCompany){
-							howManyToPay = ((PropertyCompany)steppedProperty).multiplyDicePoints( numOfHouses) ;
-						}
-						else{						
-							howManyToPay = ((PropertyTerrain)steppedProperty).getRentValue() ;
-						}
-						currentPlayer.removeMoney(howManyToPay);
-						
-						steppedProperty.getPlayerOwner().putMoney(howManyToPay);
-						Main.updatePlayerStatus(steppedProperty.getPlayerOwner());
-					}
-					
-				}
-				Main.enableBuyPropertyButton(false);
-				Main.updatePlayerStatus();
-			}
 		
-		}*/
-	
 		Main.updateFrame();
 		Main.ShowCurrentCard();
 		
@@ -165,8 +119,11 @@ public class GameController implements ActionListener {
 	
 	private void doActionOnHouse(ActionOnHouse action, Player currentPlayer, int diceRoll ){
 		switch (action) {
-		case CanBuildOnIt:
-			Main.enableBuildHouseButton(true);
+		case AlreadyOwnsIt:
+			if( Main.getBoardGame().canPlayerBuildHouseOnIt(currentPlayer.getPosition()	, currentPlayer) )
+				Main.enableBuildHouseButton(true);
+			else
+				Main.enableBuildHouseButton(false);
 			Main.enableBuyPropertyButton(false);
 			Main.updatePlayerStatus();
 			break;
@@ -177,11 +134,17 @@ public class GameController implements ActionListener {
 			break;
 		case PayforIt:
 			Property steppedProperty = Main.getBoardGame().getPropertyAt(currentPlayer.getPosition());
+			boolean couldPay = false ;
 			if(steppedProperty instanceof PropertyTerrain)
-				((PropertyTerrain)steppedProperty).chargeMoney(currentPlayer);
+				couldPay = ((PropertyTerrain)steppedProperty).chargeMoney(currentPlayer);
 			else
-				((PropertyCompany)steppedProperty).chargeMoney(currentPlayer, diceRoll);
+				couldPay = ((PropertyCompany)steppedProperty).chargeMoney(currentPlayer, diceRoll);
+			if (!couldPay){
+				Main.bankruptcyPlayer(currentPlayer);
+				return ;
+			}
 			Main.updatePlayerStatus();
+			Main.updatePlayerStatus(steppedProperty.getPlayerOwner());
 			Main.enableBuildHouseButton(false);
 			Main.enableBuyPropertyButton(false);
 			break;
@@ -193,6 +156,7 @@ public class GameController implements ActionListener {
 			Main.enableBuildHouseButton(false);
 			Main.enableBuildHouseButton(false);
 		case NothingToDo:
+			Main.updatePlayerStatus();
 			Main.enableBuildHouseButton(false);
 			Main.enableBuildHouseButton(false);
 			break;
