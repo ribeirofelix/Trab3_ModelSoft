@@ -95,13 +95,11 @@ public class PropertyTerrain extends Property implements  ICard {
 	}
 
 	public int getHouseNumber() {
-		// TODO Auto-generated method stub
-		return 0;
+		return numberOfHouses;
 	}
 
 	public boolean hasHotel() {
-		// TODO Auto-generated method stub
-		return false;
+		return hasHotel;
 	}
 
 	public String getGroup() {
@@ -110,6 +108,9 @@ public class PropertyTerrain extends Property implements  ICard {
 
 	@Override
 	public ActionOnHouse action(Player playerHere) {
+		if(this.playerOwner == null)
+			return ActionOnHouse.CanBuyIt;
+		
 		if(playerHere.hasProperty(this)){
 			if(!hasHotel){
 				return ActionOnHouse.CanBuildOnIt;

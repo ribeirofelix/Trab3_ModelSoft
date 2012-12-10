@@ -11,6 +11,7 @@ public class House {
 	}
 
 	public ICard getCard() {
+		
 		return card;
 	}
 

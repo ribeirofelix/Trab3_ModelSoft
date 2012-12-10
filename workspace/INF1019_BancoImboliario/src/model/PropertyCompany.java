@@ -23,6 +23,11 @@ public class PropertyCompany extends Property implements  ICard {
 		if(playerHere.hasProperty(this)){
 			return ActionOnHouse.NothingToDo;
 		}
+		else{
+			if(this.playerOwner == null){
+				return ActionOnHouse.CanBuyIt;
+			}
+		}
 		return ActionOnHouse.PayforIt;
 	}
 

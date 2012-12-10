@@ -6,5 +6,6 @@ public enum ActionOnHouse {
 	CanBuildOnIt,
 	CanBuyIt,
 	NothingToDo,
+	GetChance,
 	
 }

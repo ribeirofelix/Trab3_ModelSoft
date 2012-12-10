@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.net.ssl.HostnameVerifier;
+
 public class Board {
 	private ArrayList<House> houses = new ArrayList<>(40);
 	private List<Chance> chances  = new ArrayList<Chance>();
@@ -108,4 +110,13 @@ public class Board {
 		
 	}
 	
+	public void setRaffledChanceOnChanceHouse(int positon , Chance chance){
+		if(houses.get(positon).getCard() instanceof ChanceHouse){
+			((ChanceHouse)houses.get(positon).getCard()).setRaffledChance(chance);
+		}
+	}
+	
+	public ActionOnHouse getActionOnHouse(Player player){
+		return houses.get(player.getPosition()).getCard().action(player);
+	}
 }

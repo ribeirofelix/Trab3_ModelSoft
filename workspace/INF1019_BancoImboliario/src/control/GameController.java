@@ -103,12 +103,15 @@ public class GameController implements ActionListener {
 		/* Walk with the player */
 		Player currentPlayer = Main.getCurrentPlayer();		
 		currentPlayer.walk(numOfHouses);
-				
+			
+		/* Do action in accordance with the house */
+		ActionOnHouse action = Main.getBoardGame().getActionOnHouse(currentPlayer);
+		doActionOnHouse(action, currentPlayer, numOfHouses);
 		
-		/* If player already owns the place */
+		/* If player already owns the place 
 		if (currentPlayer.hasProperty(Main.getBoardGame().getPropertyAt(currentPlayer.getPosition()))){
 			
-			/* if the player can build a house */
+			 if the player can build a house 
 			if(Main.getBoardGame().canPlayerBuildHouseOnIt(currentPlayer.getPosition(), currentPlayer)){
 				
 				Main.enableBuildHouseButton(true);
@@ -152,7 +155,7 @@ public class GameController implements ActionListener {
 				Main.updatePlayerStatus();
 			}
 		
-		}
+		}*/
 	
 		Main.updateFrame();
 		Main.ShowCurrentCard();
@@ -165,6 +168,7 @@ public class GameController implements ActionListener {
 		case CanBuildOnIt:
 			Main.enableBuildHouseButton(true);
 			Main.enableBuyPropertyButton(false);
+			Main.updatePlayerStatus();
 			break;
 
 		case CanBuyIt:
@@ -177,8 +181,20 @@ public class GameController implements ActionListener {
 				((PropertyTerrain)steppedProperty).chargeMoney(currentPlayer);
 			else
 				((PropertyCompany)steppedProperty).chargeMoney(currentPlayer, diceRoll);
+			Main.updatePlayerStatus();
+			Main.enableBuildHouseButton(false);
+			Main.enableBuyPropertyButton(false);
 			break;
+		case GetChance:
+			Chance cardChance = Main.getBoardGame().getOneChance();
+			Main.getBoardGame().setRaffledChanceOnChanceHouse(currentPlayer.getPosition(), cardChance);
+			cardChance.action(currentPlayer);
+			Main.updatePlayerStatus();
+			Main.enableBuildHouseButton(false);
+			Main.enableBuildHouseButton(false);
 		case NothingToDo:
+			Main.enableBuildHouseButton(false);
+			Main.enableBuildHouseButton(false);
 			break;
 		default:
 			break;

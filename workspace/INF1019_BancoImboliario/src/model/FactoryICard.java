@@ -26,7 +26,7 @@ public class FactoryICard {
 	public  List<ICard> getBoardCards(){
 		List<ICard> allTheCards = new ArrayList<ICard>();
 		
-		for (int i = 0, chanceIdx = 0, terrainIdx = 0, companyIdx = 0; i < 40; i++){
+		for (int i = 0, terrainIdx = 0, companyIdx = 0; i < 40; i++){
 			
 			switch (i){
 			/* Start point */
@@ -36,7 +36,7 @@ public class FactoryICard {
 				
 			/* Chance */
 			case 2: case 12: case 16: case 22: case 27: case 37:
-				allTheCards.add(chanceCards.get(chanceIdx++));
+				allTheCards.add(new ChanceHouse());
 				break;
 				
 			/* Company */
@@ -56,7 +56,7 @@ public class FactoryICard {
 				
 			/* Prision or free stop - nothing hapens*/
 			case 10: case 20:
-				allTheCards.add(null);
+				allTheCards.add(new FreePass());
 				break;
 			
 			/* Busted */
